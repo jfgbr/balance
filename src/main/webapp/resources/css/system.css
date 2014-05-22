@@ -1,0 +1,18 @@
+body {
+	background-color: #EAECEE;
+	font-family: Verdana, sans-serif;
+	height: 100%;
+	font-size: 14px;
+}
+
+.ui-widget,.ui-widget .ui-widget {
+	font-size: 90% !important;
+}
+
+#header {
+	text-align: center;
+}
+
+#header h1 {
+	font-size: 250%;
+}

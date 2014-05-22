@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+	version="2.1">
+
+<!-- 	<persistence-unit name="pu" transaction-type="JTA"> -->
+<!-- 		<provider>org.hibernate.ejb.HibernatePersistence</provider> -->
+<!-- 		<properties> -->
+<!-- 			<property name="hibernate.connection.datasource" value="java:comp/env/jdbc/minimal"/> -->
+<!-- 			<property name="hibernate.hbm2ddl.auto" value="create" /> -->
+<!-- 			<property name="hibernate.show_sql" value="true" /> -->
+<!-- 			<property name="hibernate.format_sql" value="true" /> -->
+
+<!-- 			<property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect" /> -->
+<!-- 			<property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver" /> -->
+<!-- 			<property name="hibernate.connection.url" value="jdbc:mysql://localhost:3306/minimal" /> -->
+<!-- 			<property name="hibernate.connection.username" value="root" /> -->
+<!-- 			<property name="hibernate.connection.password" value="admin" /> -->
+<!-- 		</properties> -->
+<!-- 	</persistence-unit> -->
+	<persistence-unit name="balance">
+		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+<!--     	<jta-data-source>java:jboss/datasources/MySQLDS</jta-data-source> -->
+        <properties>
+<!--             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/> -->
+			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/> 
+      		<property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.hbm2ddl.auto" value="update"/>
+            <property name="hibernate.connection.charSet" value="UTF-8"/>
+        </properties>
+    </persistence-unit>
+		<!-- If you are using JBoss AS7 with non JTA transaction then use this persistence-unit -->
+	<!--
+	-->
+<!-- 	<persistence-unit name="example-ds" transaction-type="RESOURCE_LOCAL"> -->
+<!-- 		<non-jta-data-source>java:jboss/datasources/ExampleDS</non-jta-data-source> -->
+
+<!-- 		<properties> -->
+<!-- 			<property name="hibernate.show_sql" value="true" /> -->
+<!-- 			<property name="hibernate.format_sql" value="false" /> -->
+<!-- 			<property name="hibernate.hbm2ddl.auto" value="create-drop" /> -->
+<!-- 			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" /> -->
+<!-- 		</properties> -->
+<!-- 	</persistence-unit> -->
+
+	<!-- If you are using JBoss AS7 with JTA transaction then use this persistence-unit -->
+	<!--
+	<persistence-unit name="bookmark-ds" transaction-type="JTA">
+		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+		
+		<class>com.jgalante.demo2.domain.Bookmark</class>
+		
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+		<properties>
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="false" />
+			<property name="hibernate.hbm2ddl.auto" value="update" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/> 
+			<property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform" />
+		</properties>
+	</persistence-unit>
+	-->
+</persistence>
