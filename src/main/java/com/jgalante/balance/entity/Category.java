@@ -22,14 +22,24 @@ public class Category extends BaseEntity {
 	@ManyToOne(fetch = FetchType.EAGER)
 	private Category parent;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
 	private Set<Category> subCategories;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
 	private Set<Transaction> transactions;
 	
 	@Transient
 	private Integer level = 1;
+	
+	public Category() {
+		super();
+	}
+
+	public Category(String text, Category parent) {
+		super();
+		this.text = text;
+		this.parent = parent;
+	}
 
 	public String getText() {
 		return text;

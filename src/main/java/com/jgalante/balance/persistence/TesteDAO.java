@@ -26,6 +26,14 @@ public class TesteDAO implements IDAO, Serializable {
 		return (T) this.entityManager.find(getEntityClass(), id);
 	}
 
+	@Override
+	public <T extends BaseEntity> List<T> findByJpql(String jpql) {
+		List<T> results = null;
+		Query query = getEntityManager().createQuery(jpql);
+		results = query.getResultList();
+		return results;
+	}
+	
 	@Transactional
 	public <T extends BaseEntity> T save(T entity) {
 		return getEntityManager().merge(entity);
