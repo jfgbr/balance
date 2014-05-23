@@ -1,20 +1,51 @@
 package com.jgalante.balance.entity;
 
-import java.util.Set;
-
 public class Group {
 
+	private String title;
+	private Integer level;
 	private Category category;
-	private Set<Transaction> transactions;
+	private Transaction transaction;
 
 	public Group() {
 		super();
 	}
-	
-	public Group(Category category, Set<Transaction> transactions) {
+
+	public Group(Category category, Transaction transaction) {
 		super();
 		this.category = category;
-		this.transactions = transactions;
+		if (transaction == null) {
+			this.transaction = new Transaction();
+		} else {
+			this.transaction = transaction;
+		}
+		this.title = category.getText();
+		this.level = category.getLevel();
+	}
+
+	public String getTitle() {
+
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
+	public Transaction getTransaction() {
+		return transaction;
+	}
+
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
 	}
 
 	public Category getCategory() {
@@ -23,14 +54,6 @@ public class Group {
 
 	public void setCategory(Category category) {
 		this.category = category;
-	}
-
-	public Set<Transaction> getTransactions() {
-		return transactions;
-	}
-
-	public void setTransactions(Set<Transaction> transactions) {
-		this.transactions = transactions;
 	}
 
 }

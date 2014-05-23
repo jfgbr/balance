@@ -34,11 +34,22 @@ public class Category extends BaseEntity {
 	public Category() {
 		super();
 	}
+	
+	public Category(String text) {
+		super();
+		this.text = text;
+	}
 
 	public Category(String text, Category parent) {
 		super();
 		this.text = text;
 		this.parent = parent;
+	}
+	
+	public Category(String text, Set<Category> subCategories) {
+		super();
+		this.text = text;
+		this.subCategories = subCategories;
 	}
 
 	public String getText() {

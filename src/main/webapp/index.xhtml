@@ -27,8 +27,14 @@
 			<f:facet name="header">
             	Balance
         	</f:facet>
-        	<p:column headerText="Text">
-				#{group.category.text}
+        	<p:column headerText="Title">
+				#{group.title}
+			</p:column>
+			<p:column headerText="Type">
+				#{group.transaction.transactionType.text}
+			</p:column>
+			<p:column headerText="Value">
+				#{group.transaction.value}
 			</p:column>
 		</p:treeTable>
 	</h:form>

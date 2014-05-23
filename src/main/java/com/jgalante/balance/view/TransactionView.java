@@ -1,6 +1,7 @@
 package com.jgalante.balance.view;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
@@ -28,9 +29,11 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 		setEntity(new Transaction());
 //		setEntities(getController().findAll());
 		
-		categories = ((TransactionController)getController()).findCategories();
+//		categories = ((TransactionController)getController()).findCategories();
 		
-		root = new DefaultTreeNode(new Group(new Category("Balance", null), null), null);
+//		List<Category> parents = ((TransactionController)getController()).findCategoriesByParent(null);
+//		root = new DefaultTreeNode(new Group(new Category("Balance", new LinkedHashSet<Category>(parents)), null), null);
+		root = new DefaultTreeNode(new Group(new Category("Balance"), null), null);
 		
 		createTreeCategories(root, null);
 	}
@@ -41,9 +44,19 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 //		if (parent != null) {
 //			idParent = parent.getId();
 //		}
-		List<Category> parents = ((TransactionController)getController()).findCategoriesByParent(idParent);
-        for (Category category : parents) {
-        	TreeNode node = new DefaultTreeNode(new Group(category, category.getTransactions()), root);
+		List<Category> categories = ((TransactionController)getController()).findCategoriesByParent(idParent);
+//		Set<Category> parents = ((Group)root.getData()).getCategory().getSubCategories(); 
+        for (Category category : categories) {
+        	Set<Transaction> transactions = category.getTransactions();
+        	TreeNode node = null;
+        	if (transactions != null && !transactions.isEmpty()) {
+        		for (Transaction transaction : transactions) {
+        			node = new DefaultTreeNode(new Group(category, transaction), root);
+				}
+        	} else {
+        		node = new DefaultTreeNode(new Group(category, null), root);
+        	}
+        	
         	if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
         		createTreeCategories(node, category.getId());
         	}

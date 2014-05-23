@@ -15,7 +15,11 @@ public class TransactionController extends
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT object(o) FROM ");
 		sb.append(Category.class.getName());
-		sb.append(" AS o WHERE o.parent = ");
+		sb.append(" AS o ");
+		sb.append(" LEFT JOIN FETCH o.parent p ");
+//		sb.append(" LEFT JOIN FETCH o.subCategories s ");
+//		sb.append(" LEFT JOIN FETCH s.transactions t ");
+		sb.append(" WHERE p = ");
 		sb.append(idParent);
 		
 		return getDAO().findByJpql(sb.toString());

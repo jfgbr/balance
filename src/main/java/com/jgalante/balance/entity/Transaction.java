@@ -17,15 +17,15 @@ import com.jgalante.jgcrud.entity.BaseEntity;
 public class Transaction extends BaseEntity {
 
 	@JoinColumn(name = "id_person")
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Person person;
 
-	@JoinColumn(name = "id_transaction", nullable = false)
+	@JoinColumn(name = "id_type", nullable = false)
 	@ManyToOne(fetch = FetchType.EAGER)
 	private TransactionType transactionType;
 
 	@JoinColumn(name = "id_category", nullable = false)
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Category category;
 
 	@JoinColumn(name = "id_parent")
