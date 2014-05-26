@@ -16,3 +16,20 @@ body {
 #header h1 {
 	font-size: 250%;
 }
+
+.trans-col-01 {
+	width: 400px;
+}
+
+.trans-col-02 {
+	width: 100px;
+	text-align: right;
+}
+
+.trans-row-01 {
+	background-color: #d9d9d9;
+}
+
+.trans-row-02 {
+	background-color: white;
+}

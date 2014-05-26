@@ -9,7 +9,7 @@ import javax.persistence.OneToMany;
 
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-@Entity
+@Entity(name="PERSON")
 public class Person extends BaseEntity {
 
 	@Column(name="name", nullable = false)

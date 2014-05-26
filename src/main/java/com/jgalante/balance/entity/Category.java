@@ -12,7 +12,7 @@ import javax.persistence.Transient;
 
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-@Entity
+@Entity(name="CATEGORY")
 public class Category extends BaseEntity {
 
 	@Column(name = "text", nullable = false)

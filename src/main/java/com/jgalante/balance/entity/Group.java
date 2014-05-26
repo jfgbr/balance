@@ -14,12 +14,16 @@ public class Group {
 	public Group(Category category, Transaction transaction) {
 		super();
 		this.category = category;
+		String name = "";
 		if (transaction == null) {
 			this.transaction = new Transaction();
 		} else {
 			this.transaction = transaction;
+			if (this.transaction.getPerson() != null) {
+				name = " - " + this.transaction.getPerson().getName(); 
+			}
 		}
-		this.title = category.getText();
+		this.title = category.getText() + name;
 		this.level = category.getLevel();
 	}
 

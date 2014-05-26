@@ -23,18 +23,18 @@
 				#{trans.name}
 			</p:column>
 		</p:dataTable>
-		<p:treeTable value="#{transactionView.root}" var="group">
+		<p:treeTable value="#{transactionView.root}" var="group" style="width:450px;" rowStyleClass="#{(group.level mod 2) ne 0 ? 'trans-row-01' : 'trans-row-02'}" >
 			<f:facet name="header">
             	Balance
         	</f:facet>
-        	<p:column headerText="Title">
+        	<p:column headerText="Title" styleClass="trans-col-01">
 				#{group.title}
 			</p:column>
-			<p:column headerText="Type">
-				#{group.transaction.transactionType.text}
-			</p:column>
-			<p:column headerText="Value">
-				#{group.transaction.value}
+			<p:column headerText="Value" styleClass="trans-col-02">
+				<h:outputText value="#{group.transaction.value}" >
+					<f:convertNumber minFractionDigits="2"/>
+				</h:outputText>
+				
 			</p:column>
 		</p:treeTable>
 	</h:form>

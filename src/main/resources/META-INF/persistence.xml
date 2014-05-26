@@ -20,11 +20,12 @@
 <!-- 		</properties> -->
 <!-- 	</persistence-unit> -->
 	<persistence-unit name="balance">
-		<jta-data-source>java:jboss/datasources/ExampleDS</jta-data-source>
+		<jta-data-source>java:jboss/datasources/balance-ds</jta-data-source>
 <!--     	<jta-data-source>java:jboss/datasources/MySQLDS</jta-data-source> -->
         <properties>
 <!--             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/> -->
-			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/> 
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLInnoDBDialect"/>            
+<!-- 			<property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>  -->
       		<property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.connection.charSet" value="UTF-8"/>

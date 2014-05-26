@@ -10,14 +10,15 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
 
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-@Entity
+@Entity(name="TRANSACTION")
 public class Transaction extends BaseEntity {
 
 	@JoinColumn(name = "id_person")
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	private Person person;
 
 	@JoinColumn(name = "id_type", nullable = false)
@@ -46,6 +47,24 @@ public class Transaction extends BaseEntity {
 
 	public Person getPerson() {
 		return person;
+	}
+	
+	@Transient
+	public void addValue(BigDecimal newValue) {
+		if (newValue != null) {
+			BigDecimal value;
+			if (this.value != null) {
+				value = getValue().add(newValue);
+			} else {
+				value = newValue;
+			}
+			if (value.compareTo(BigDecimal.ZERO) == -1) {
+				setTransactionType(TransactionType.NEGATIVE);			
+			} else {
+				setTransactionType(TransactionType.POSITIVE);
+			}
+			setValue(value.abs());
+		}
 	}
 
 	public void setPerson(Person person) {
@@ -92,8 +111,17 @@ public class Transaction extends BaseEntity {
 		this.transactionDate = transactionDate;
 	}
 
-	public BigDecimal getValue() {
+	@Transient
+	public BigDecimal getValueAbsolute() {
 		return value;
+	}
+	
+	public BigDecimal getValue() {
+		if (value != null) {
+			return value.multiply(new BigDecimal(transactionType.getPositive()?1 : -1));
+		} else {
+			return value;
+		}
 	}
 
 	public void setValue(BigDecimal value) {

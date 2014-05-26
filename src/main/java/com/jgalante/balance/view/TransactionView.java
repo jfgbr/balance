@@ -33,9 +33,11 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 		
 //		List<Category> parents = ((TransactionController)getController()).findCategoriesByParent(null);
 //		root = new DefaultTreeNode(new Group(new Category("Balance", new LinkedHashSet<Category>(parents)), null), null);
-		root = new DefaultTreeNode(new Group(new Category("Balance"), null), null);
+		root = new DefaultTreeNode(new Group(new Category("Balance"), new Transaction()), null);
 		
 		createTreeCategories(root, null);
+		
+		TreeNode node = new DefaultTreeNode(new Group(new Category("Total"), ((Group)root.getData()).getTransaction()), root);
 	}
 	
 	public void createTreeCategories(TreeNode root, Long idParent) {
@@ -51,14 +53,16 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
         	TreeNode node = null;
         	if (transactions != null && !transactions.isEmpty()) {
         		for (Transaction transaction : transactions) {
+        			((Group)root.getData()).getTransaction().addValue(transaction.getValue());
         			node = new DefaultTreeNode(new Group(category, transaction), root);
 				}
         	} else {
-        		node = new DefaultTreeNode(new Group(category, null), root);
+        		node = new DefaultTreeNode(new Group(category, new Transaction()), root);
         	}
         	
         	if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
         		createTreeCategories(node, category.getId());
+        		((Group)root.getData()).getTransaction().addValue(((Group)node.getData()).getTransaction().getValue());
         	}
 		}
 	}

@@ -9,8 +9,11 @@ import javax.persistence.OneToMany;
 
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-@Entity
+@Entity(name="TP_TRANSACTION")
 public class TransactionType extends BaseEntity {
+
+	public static final TransactionType POSITIVE = new TransactionType("POSITIVE", true);
+	public static final TransactionType NEGATIVE = new TransactionType("NEGATIVE", false);
 
 	@Column(name = "text", nullable = false)
 	private String text;
@@ -20,6 +23,16 @@ public class TransactionType extends BaseEntity {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "transactionType")
 	private Set<Transaction> transactions;
+	
+	public TransactionType() {
+		super();
+	}
+	
+	public TransactionType(String text, Boolean positive) {
+		super();
+		this.text = text;
+		this.positive = positive;
+	}
 
 	public String getText() {
 		return text;
