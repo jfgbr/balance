@@ -13,6 +13,7 @@ import org.primefaces.model.TreeNode;
 import com.jgalante.balance.controller.TransactionController;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Group;
+import com.jgalante.balance.entity.Group2;
 import com.jgalante.balance.entity.Transaction;
 
 @Named
@@ -37,7 +38,7 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 		
 		createTreeCategories(root, null);
 		
-		TreeNode node = new DefaultTreeNode(new Group(new Category("Total"), ((Group)root.getData()).getTransaction()), root);
+		new DefaultTreeNode(new Group(new Category("Total"), ((Group)root.getData()).getTransaction()), root);
 	}
 	
 	public void createTreeCategories(TreeNode root, Long idParent) {
@@ -67,6 +68,17 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 		}
 	}
 
+	public void createListCategories(List<Group2> root, Long idParent) {
+		List<Category> categories = ((TransactionController)getController()).findCategoriesByParent(idParent);
+		for (Category category : categories) {
+			root.add(new Group2(category, null, null));
+			Group2 node = null;
+			if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
+				createListCategories(root, category.getId());
+			}
+		}
+	}
+	
 	public List<Category> getCategories() {
 		return categories;
 	}

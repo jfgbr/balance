@@ -15,7 +15,15 @@
 		<p:selectOneMenu value="#{transactionView.entity.category}" >
 			<f:selectItems value="#{transactionView.categories}" var="c" itemLabel="#{c}" itemValue="#{c}"/>
 		</p:selectOneMenu>
-		<p:dataTable value="#{transactionView.entities}" var="trans" style="width:50px;">
+		<p:dataTable value="#{transactionView.entities}" var="trans" style="width:500px;">
+		   	<p:columnGroup type="header">
+	            <p:row>
+	                <p:column headerText="" />
+	                <p:column headerText="Janeiro" />
+	                <p:column headerText="Fevereiro" />
+	                <p:column headerText="Março" />
+	            </p:row>
+	        </p:columnGroup>
 			<p:column headerText="Name">
 				#{trans.name}
 			</p:column>
@@ -32,7 +40,7 @@
 			</p:column>
 			<p:column headerText="Value" styleClass="trans-col-02">
 				<h:outputText value="#{group.transaction.value}" >
-					<f:convertNumber minFractionDigits="2"/>
+					<f:convertNumber type="currency" currencySymbol="R$" />
 				</h:outputText>
 				
 			</p:column>
