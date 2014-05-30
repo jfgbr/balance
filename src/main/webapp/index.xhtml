@@ -30,7 +30,25 @@
 			<p:column headerText="Name">
 				#{trans.name}
 			</p:column>
+			
 		</p:dataTable>
+		<p:dataTable value="#{transactionView.group}" var="group" style="width:1500px;" rowStyleClass="#{group.onlyCategory ? 'trans-row-01' : 'trans-row-02'}">
+			<f:facet name="header">
+            	Balance
+        	</f:facet>
+        	<p:column headerText="Title" styleClass="trans-col-01">
+				#{group.title}
+			</p:column>
+			<p:columns value="#{transactionView.dates}" var="column" columnIndexVar="colIndex" styleClass="trans-col-02">
+	            <f:facet name="header">
+	                <h:outputText value="#{column.header}" />
+	            </f:facet>
+	            <h:outputText value="#{group.values[colIndex]}" >
+					<f:convertNumber type="currency" currencySymbol="R$" />
+				</h:outputText>
+	        </p:columns>
+		</p:dataTable>
+		
 		<p:treeTable value="#{transactionView.root}" var="group" style="width:450px;" rowStyleClass="#{(group.level mod 2) ne 0 ? 'trans-row-01' : 'trans-row-02'}" >
 			<f:facet name="header">
             	Balance

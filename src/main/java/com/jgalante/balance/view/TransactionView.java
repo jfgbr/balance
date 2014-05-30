@@ -1,5 +1,8 @@
 package com.jgalante.balance.view;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,9 +27,59 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 
 	private List<Category> categories;
 	private TreeNode root;
+	private List<Group2> group;
+	private List<ColumnModel> dates;
+	
+	static public class ColumnModel implements Serializable {
+
+		private static final long serialVersionUID = 1L;
+		
+		private String header;
+		private String property;
+		private BigDecimal value;
+		
+		public ColumnModel(String header) {
+			super();
+			this.header = header;
+		}
+		
+		public ColumnModel(String header, BigDecimal value) {
+			super();
+			this.header = header;
+			this.value = value;
+		}
+		
+		public ColumnModel(String header, String property, BigDecimal value) {
+			super();
+			this.header = header;
+			this.property = property;
+			this.value = value;
+		}
+
+		public String getHeader() {
+			return header;
+		}
+
+		public String getProperty() {
+			return property;
+		}
+
+		public BigDecimal getValue() {
+			return value;
+		}
+
+		public void setValue(BigDecimal value) {
+			this.value = value;
+		}
+
+	}
 	
 	@PostConstruct
 	public void init() {
+		dates = new LinkedList<TransactionView.ColumnModel>();
+		for (int i = 0; i < 12; i++) {
+			dates.add(new ColumnModel(Integer.toString(i+1)));
+		}
 		setEntity(new Transaction());
 //		setEntities(getController().findAll());
 		
@@ -36,9 +89,11 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 //		root = new DefaultTreeNode(new Group(new Category("Balance", new LinkedHashSet<Category>(parents)), null), null);
 		root = new DefaultTreeNode(new Group(new Category("Balance"), new Transaction()), null);
 		
-		createTreeCategories(root, null);
+//		createTreeCategories(root, null);
 		
-		new DefaultTreeNode(new Group(new Category("Total"), ((Group)root.getData()).getTransaction()), root);
+//		new DefaultTreeNode(new Group(new Category("Total"), ((Group)root.getData()).getTransaction()), root);
+		
+		createListCategories(null,null);
 	}
 	
 	public void createTreeCategories(TreeNode root, Long idParent) {
@@ -69,14 +124,15 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 	}
 
 	public void createListCategories(List<Group2> root, Long idParent) {
-		List<Category> categories = ((TransactionController)getController()).findCategoriesByParent(idParent);
-		for (Category category : categories) {
-			root.add(new Group2(category, null, null));
-			Group2 node = null;
-			if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
-				createListCategories(root, category.getId());
-			}
-		}
+//		List<Category> categories = ((TransactionController)getController()).findCategoriesByParent(idParent);
+//		for (Category category : categories) {
+////			root.add(new Group2(category, null, null));
+//			Group2 node = null;
+//			if (category.getSubCategories() != null && !category.getSubCategories().isEmpty()) {
+//				createListCategories(root, category.getId());
+//			}
+//		}
+		group = ((TransactionController)getController()).findGroupsByParent(idParent);
 	}
 	
 	public List<Category> getCategories() {
@@ -90,4 +146,13 @@ public class TransactionView extends TesteView<Transaction, TransactionControlle
 	public TreeNode getRoot() {
         return root;
     }
+
+	public List<Group2> getGroup() {
+		return group;
+	}
+
+	public List<ColumnModel> getDates() {
+		return dates;
+	}
+	
 }

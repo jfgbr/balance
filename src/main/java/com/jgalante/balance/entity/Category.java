@@ -19,14 +19,20 @@ public class Category extends BaseEntity {
 	private String text;
 
 	@JoinColumn(name = "id_parent")
-	@ManyToOne(fetch = FetchType.EAGER)
+//	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	private Category parent;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
+//	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
 	private Set<Category> subCategories;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
+//	@OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
 	private Set<Transaction> transactions;
+	
+	@Column(name = "nr_order", nullable = false)
+	private Integer order = 1;
 	
 	@Transient
 	private Integer level = 1;
@@ -89,6 +95,14 @@ public class Category extends BaseEntity {
 			level += parent.getLevel();
 		}
 		return level;
+	}
+	
+	public Integer getOrder() {
+		return order;
+	}
+
+	public void setOrder(Integer order) {
+		this.order = order;
 	}
 
 	@Override
