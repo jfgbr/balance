@@ -8,10 +8,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 
+import com.jgalante.balance.facade.IDAO;
 import com.jgalante.jgcrud.annotation.DataRepository;
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-public class TesteDAO implements IDAO, Serializable {
+public class BaseDAO implements IDAO, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,6 +27,7 @@ public class TesteDAO implements IDAO, Serializable {
 		return (T) this.entityManager.find(getEntityClass(), id);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends BaseEntity> List<T> findByJpql(String jpql) {
 		List<T> results = null;
@@ -38,13 +40,6 @@ public class TesteDAO implements IDAO, Serializable {
 	public <T extends BaseEntity> T save(T entity) {
 		return getEntityManager().merge(entity);
 	}
-
-	// public List<? extends BaseEntity> findAll() {
-	// CriteriaQuery<? extends BaseEntity> cq =
-	// getEntityManager().getCriteriaBuilder().createQuery(getEntityClass());
-	// cq.multiselect(cq.from(getEntityClass()));
-	// return getEntityManager().createQuery(cq).getResultList();
-	// }
 
 	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> List<T> findAll(boolean ascending, String... sort) {

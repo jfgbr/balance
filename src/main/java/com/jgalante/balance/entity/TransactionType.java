@@ -1,15 +1,10 @@
 package com.jgalante.balance.entity;
 
-import java.util.Set;
-
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-@Entity(name="TP_TRANSACTION")
+//@Entity(name="TP_TRANSACTION")
 public class TransactionType extends BaseEntity {
 
 	public static final TransactionType POSITIVE = new TransactionType("POSITIVE", true);
@@ -21,8 +16,8 @@ public class TransactionType extends BaseEntity {
 	@Column(name = "positive", nullable = false)
 	private Boolean positive = true;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "transactionType")
-	private Set<Transaction> transactions;
+	//@OneToMany(fetch = FetchType.LAZY, mappedBy = "transactionType")
+	//private Set<Transaction> transactions;
 	
 	public TransactionType() {
 		super();
@@ -48,14 +43,6 @@ public class TransactionType extends BaseEntity {
 
 	public void setPositive(Boolean positive) {
 		this.positive = positive;
-	}
-
-	public Set<Transaction> getTransactions() {
-		return transactions;
-	}
-
-	public void setTransactions(Set<Transaction> transactions) {
-		this.transactions = transactions;
 	}
 
 }

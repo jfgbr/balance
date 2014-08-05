@@ -4,6 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
@@ -12,57 +13,55 @@
 </h:head>
 <body>
 	<h:form>
-		<p:selectOneMenu value="#{transactionView.entity.category}" >
-			<f:selectItems value="#{transactionView.categories}" var="c" itemLabel="#{c}" itemValue="#{c}"/>
+		<p:selectOneMenu value="#{groupView.category.id}">
+			<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+			<f:selectItems value="#{categoryView.categories}" var="c"
+				itemLabel="#{c}" itemValue="#{c.id}" />
 		</p:selectOneMenu>
-		<p:dataTable value="#{transactionView.entities}" var="trans" style="width:500px;">
-		   	<p:columnGroup type="header">
-	            <p:row>
-	                <p:column headerText="" />
-	                <p:column headerText="Janeiro" />
-	                <p:column headerText="Fevereiro" />
-	                <p:column headerText="Março" />
-	            </p:row>
-	        </p:columnGroup>
-			<p:column headerText="Name">
-				#{trans.name}
-			</p:column>
-			<p:column headerText="Name">
-				#{trans.name}
-			</p:column>
-			
-		</p:dataTable>
-		<p:dataTable value="#{transactionView.group}" var="group" style="width:1500px;" rowStyleClass="#{group.onlyCategory ? 'trans-row-01' : 'trans-row-02'}">
+
+		<p:dataTable id="tbl" value="#{groupView.group}" var="group"
+			style="width:1500px;"
+			rowStyleClass="#{group.onlyCategory ? 'trans-row-01' : 'trans-row-02'}">
 			<f:facet name="header">
             	Balance
         	</f:facet>
-        	<p:column headerText="Title" styleClass="trans-col-01">
-				#{group.title}
+			<p:columnGroup type="header">
+				<p:row>
+					<p:column headerText="Title" width="200" />
+					<c:forEach items="#{groupView.dates}" var="column">
+						<p:column headerText="#{column.header}" />
+					</c:forEach>
+				</p:row>
+			</p:columnGroup>
+
+
+			<p:column styleClass="trans-col-01"
+				rendered="#{group.onlyCategory or group.showing}">
+
+				<h:panelGroup layout="block" >
+					<h:outputText value="#{group.title}" style="float:right;" />
+					<p:commandLink action="#{group.invertShowing}" update="tbl"
+						rendered="#{group.hasSubCategories and !group.showing}">
+						<h:panelGroup layout="block"
+							styleClass="ui-row-toggler ui-icon ui-icon-circle-triangle-e" />
+					</p:commandLink>
+					<p:commandLink action="#{group.invertShowing}" update="tbl"
+						rendered="#{group.hasSubCategories and group.showing}">
+						<h:panelGroup layout="block"
+							styleClass="ui-row-toggler ui-icon ui-icon-circle-triangle-s" />
+					</p:commandLink>
+				</h:panelGroup>
 			</p:column>
-			<p:columns value="#{transactionView.dates}" var="column" columnIndexVar="colIndex" styleClass="trans-col-02">
-	            <f:facet name="header">
-	                <h:outputText value="#{column.header}" />
-	            </f:facet>
-	            <h:outputText value="#{group.values[colIndex]}" >
+
+			<p:columns value="#{groupView.dates}" var="column"
+				columnIndexVar="colIndex" styleClass="trans-col-02"
+				rendered="#{group.onlyCategory or group.showing}">
+				<h:outputText value="#{group.values[colIndex]}">
 					<f:convertNumber type="currency" currencySymbol="R$" />
 				</h:outputText>
-	        </p:columns>
+			</p:columns>
 		</p:dataTable>
-		
-		<p:treeTable value="#{transactionView.root}" var="group" style="width:450px;" rowStyleClass="#{(group.level mod 2) ne 0 ? 'trans-row-01' : 'trans-row-02'}" >
-			<f:facet name="header">
-            	Balance
-        	</f:facet>
-        	<p:column headerText="Title" styleClass="trans-col-01">
-				#{group.title}
-			</p:column>
-			<p:column headerText="Value" styleClass="trans-col-02">
-				<h:outputText value="#{group.transaction.value}" >
-					<f:convertNumber type="currency" currencySymbol="R$" />
-				</h:outputText>
-				
-			</p:column>
-		</p:treeTable>
+
 	</h:form>
 </body>
 </html>

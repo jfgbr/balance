@@ -5,11 +5,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.jgalante.balance.controller.IController;
-import com.jgalante.balance.persistence.IDAO;
+import com.jgalante.balance.facade.IController;
+import com.jgalante.balance.facade.IDAO;
+import com.jgalante.balance.qualifier.Controller;
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-public class TesteView<T extends BaseEntity, C extends IController<T, ? extends IDAO>>
+public class BaseView<T extends BaseEntity, C extends IController<T, ? extends IDAO>>
 		implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -21,16 +22,6 @@ public class TesteView<T extends BaseEntity, C extends IController<T, ? extends 
 	@Controller
 	private IController<T, ? extends IDAO> controller;
 	
-//	private C control;
-	
-//	public C getControl() {
-//		return (C)controller;
-//	}
-//
-//	public void setControl(C control) {
-//		this.control = control;
-//	}
-
 	public IController<T, ? extends IDAO> getController() {
 		return controller;
 	}

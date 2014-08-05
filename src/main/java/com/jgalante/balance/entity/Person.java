@@ -9,15 +9,15 @@ import javax.persistence.OneToMany;
 
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-@Entity(name="PERSON")
+@Entity(name = "person")
 public class Person extends BaseEntity {
 
-	@Column(name="name", nullable = false)
+	@Column(name = "ds_name", nullable = false)
 	private String name;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "person")
-	private Set<Transaction> transactions;
-	
+	private Set<Category> categories;
+
 	public Person() {
 		super();
 	}
@@ -35,12 +35,19 @@ public class Person extends BaseEntity {
 		this.name = name;
 	}
 
-	public Set<Transaction> getTransactions() {
-		return transactions;
-	}
-
-	public void setTransactions(Set<Transaction> transactions) {
-		this.transactions = transactions;
+	@Override
+	public boolean equals(Object obj) {
+		if (!super.equals(obj)) {
+			Person other = (Person) obj;
+			if (this.name == null) {
+				if (other.name != null) {
+					return false;
+				}
+			} else if (!this.name.equals(other.name)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

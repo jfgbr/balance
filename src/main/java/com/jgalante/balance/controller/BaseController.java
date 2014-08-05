@@ -5,12 +5,13 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import com.jgalante.balance.persistence.DAO;
-import com.jgalante.balance.persistence.IDAO;
-import com.jgalante.balance.persistence.TesteDAO;
+import com.jgalante.balance.facade.IController;
+import com.jgalante.balance.facade.IDAO;
+import com.jgalante.balance.persistence.BaseDAO;
+import com.jgalante.balance.qualifier.DAO;
 import com.jgalante.jgcrud.entity.BaseEntity;
 
-public class TesteController<T extends BaseEntity, D extends TesteDAO> implements IController<T, D>, Serializable {
+public class BaseController<T extends BaseEntity, D extends BaseDAO> implements IController<T, D>, Serializable {
 	
 	private static final long serialVersionUID = 1L;
 

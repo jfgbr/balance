@@ -1,8 +1,7 @@
-package com.jgalante.balance.controller;
+package com.jgalante.balance.facade;
 
 import java.util.List;
 
-import com.jgalante.balance.persistence.IDAO;
 import com.jgalante.jgcrud.entity.BaseEntity;
 
 public interface IController<T extends BaseEntity, D extends IDAO> {

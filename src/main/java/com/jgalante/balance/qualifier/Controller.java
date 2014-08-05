@@ -1,4 +1,4 @@
-package com.jgalante.balance.view;
+package com.jgalante.balance.qualifier;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
