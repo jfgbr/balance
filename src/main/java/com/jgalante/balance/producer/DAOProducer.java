@@ -38,6 +38,6 @@ public class DAOProducer {
 			return null;
 		}
 		throw new IllegalArgumentException(
-				"Annotation @DAO is required when injecting GenericDAO or subclasses");
+				"Annotation @DAO is required when injecting IDAO or subclasses");
 	}
 }

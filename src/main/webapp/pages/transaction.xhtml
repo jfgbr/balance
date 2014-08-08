@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:v="http://xmlns.jcp.org/jsf/composite/components"
+	template="/resources/templates/template.xhtml">
+	<ui:define name="content">
+		<v:crudPage id="crud-transaction" formId="frm-transaction" view="#{transactionView}"
+			headerPanel="#{constants['transaction.title']}" >
+
+			<p:column sortBy="#{item.value}">
+				<f:facet name="header">
+					<h:outputText value="Value" escape="false" />
+				</f:facet>
+				<h:outputText value="#{item.value}" />
+			</p:column>
+
+			<p:column styleClass="btnColunaAcoes">
+				<p:commandButton action="#{transactionView.edit}" update=":crud-transaction:frm-transaction:edit:modal"
+						icon="ui-icon ui-icon-plusthick" style="font-size:6pt;" />
+				<h:outputText value=" " />
+				<p:commandButton action="#{transactionView.remove}" update=":crud-transaction:frm-transaction:data-table"
+					icon="ui-icon ui-icon-closethick" style="font-size:6pt;" />
+			</p:column>
+
+			<f:facet name="dialogFields">
+				<h:panelGrid columns="2" width="300px">
+					<h:outputText value="Value" />
+					<h:inputText id="txt-value" value="#{transactionView.entity.value}"
+						maxlength="25" />
+				</h:panelGrid>
+			</f:facet>
+
+		</v:crudPage>
+
+	</ui:define>
+</ui:composition>

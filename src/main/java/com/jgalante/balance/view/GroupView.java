@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,20 +24,33 @@ public class GroupView implements Serializable {
 	private GroupController controller;
 	
 	private List<Category> categories;
-	private Category category;
+	private Long category;
 	private List<Group> group;
 	private List<ColumnModel> dates;
 	
 	@PostConstruct
 	public void init() {
-		category = new Category();
+		category = null;//new Category();
 		dates = controller.months();
 		
-		createListCategories(null,null);
+		createListCategories(null);
 	}
 
-	public void createListCategories(List<Group> root, Long idParent) {
+	public void createListCategories(Long idParent) {
 		group = controller.findGroupsByParent(idParent);
+	}
+	
+	public void handleCategoryChange(ValueChangeEvent event) {
+		category = null;
+		try {
+			category = Long.parseLong(event.getNewValue()
+					.toString());
+
+			
+		} catch (Exception e) {
+			category = null;
+		}
+		createListCategories(category);
 	}
 	
 	public List<Category> getCategories() {
@@ -55,11 +69,11 @@ public class GroupView implements Serializable {
 		return dates;
 	}
 
-	public Category getCategory() {
+	public Long getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
+	public void setCategory(Long category) {
 		this.category = category;
 	}
 

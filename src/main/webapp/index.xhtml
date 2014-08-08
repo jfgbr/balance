@@ -13,7 +13,8 @@
 </h:head>
 <body>
 	<h:form>
-		<p:selectOneMenu value="#{groupView.category.id}">
+		<p:selectOneMenu valueChangeListener="#{groupView.handleCategoryChange}">
+			<p:ajax event="change" process="@this" update="tbl"/>
 			<f:selectItem itemLabel="Selecione" itemValue="${null}" />
 			<f:selectItems value="#{categoryView.categories}" var="c"
 				itemLabel="#{c}" itemValue="#{c.id}" />
@@ -21,13 +22,13 @@
 
 		<p:dataTable id="tbl" value="#{groupView.group}" var="group"
 			style="width:1500px;"
-			rowStyleClass="#{group.onlyCategory ? 'trans-row-01' : 'trans-row-02'}">
+			rowStyleClass="#{group.onlyCategory ? 'trans-row-01' : 'trans-row-02'}" >
 			<f:facet name="header">
             	Balance
         	</f:facet>
 			<p:columnGroup type="header">
 				<p:row>
-					<p:column headerText="Title" width="200" />
+					<p:column headerText="Title" width="200"  />
 					<c:forEach items="#{groupView.dates}" var="column">
 						<p:column headerText="#{column.header}" />
 					</c:forEach>
@@ -60,6 +61,7 @@
 					<f:convertNumber type="currency" currencySymbol="R$" />
 				</h:outputText>
 			</p:columns>
+			
 		</p:dataTable>
 
 	</h:form>

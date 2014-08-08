@@ -1,6 +1,5 @@
 package com.jgalante.balance.producer;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import javax.enterprise.context.Dependent;
@@ -11,6 +10,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.qualifier.Controller;
+import com.jgalante.balance.util.ClassHelper;
 import com.jgalante.jgcrud.entity.BaseEntity;
 import com.jgalante.jgcrud.util.Util;
 
@@ -27,7 +27,7 @@ public class ControllerProducer {
 			Class<T> entityClass;
 			Class<? extends IController<T, ? extends IDAO>> controllerClass = null;
 			try {
-				Type[] typeArguments = getTypeArguments(((Class<?>) ip
+				Type[] typeArguments = ClassHelper.getTypeArguments(((Class<?>) ip
 						.getBean().getBeanClass()));
 
 				entityClass = (Class<T>) typeArguments[0];
@@ -51,23 +51,6 @@ public class ControllerProducer {
 		}
 		throw new IllegalArgumentException(
 				"Annotation @Controller is required when injecting GenericController or subclasses");
-	}
-	
-	private Type getSuperClassType(Type type) {
-		return ((Class<?>) type).getGenericSuperclass();
-	}
-
-	private Type[] getTypeArguments(Type type) {
-		Type superClassType = getSuperClassType(type);
-		Type[] typeArguments = null;
-		try {
-			typeArguments = ((ParameterizedType) (superClassType))
-					.getActualTypeArguments();
-
-		} catch (Exception e) {
-			typeArguments = getTypeArguments(superClassType);
-		}
-		return typeArguments;
 	}
 
 }

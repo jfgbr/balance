@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+	<h:form id="frm-menu">
+		<h:panelGrid columns="1" >
+			<p:commandButton action="/pages/transaction?faces-redirect=true" value="#{constants['transaction.title']}" style="width:100px">
+				<f:setPropertyActionListener target="#{flash.crudPage}" value="#{constants['transaction.title']}"/>
+			</p:commandButton>
+		</h:panelGrid>
+		
+	<ui:remove>
+	<p:menu style="width:200px" >
+		<p:submenu>
+			<p:menuitem value="Usuário" url="/pages/usuario" >
+			</p:menuitem>
+		</p:submenu>
+		
+		<p:submenu>
+			<p:menuitem value="País" url="/pages/pais" />
+		</p:submenu>
+		
+		<p:submenu>
+			<p:menuitem value="Time" url="/pages/time" />
+		</p:submenu>
+		
+		<p:submenu>
+			<p:menuitem value="Participante" url="/pages/participante" />
+		</p:submenu>
+		
+		<p:submenu>
+			<p:menuitem value="Partida" url="/pages/partida" />
+		</p:submenu>
+		
+		<p:submenu>
+			<p:submenu label="Campeonato">
+				<p:menuitem value="Listar" url="/pages/campeonato"/>
+				<p:menuitem value="Tabela" />
+			</p:submenu>
+		</p:submenu>
+		
+	</p:menu>
+	</ui:remove>
+	</h:form>
+</ui:composition>

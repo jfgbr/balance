@@ -9,6 +9,7 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import com.jgalante.balance.facade.IDAO;
+import com.jgalante.balance.util.ClassHelper;
 import com.jgalante.jgcrud.annotation.DataRepository;
 import com.jgalante.jgcrud.entity.BaseEntity;
 
@@ -41,6 +42,13 @@ public class BaseDAO implements IDAO, Serializable {
 		return getEntityManager().merge(entity);
 	}
 
+	@Override
+	@Transactional
+	public <T extends BaseEntity> T remove(T entity) {
+		getEntityManager().remove(entity);
+		return entity;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <T extends BaseEntity> List<T> findAll(boolean ascending, String... sort) {
 		return (List<T>) findAll(getEntityClass(), ascending, sort);
@@ -83,8 +91,12 @@ public class BaseDAO implements IDAO, Serializable {
 		return entityManager;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends BaseEntity> getEntityClass() {
+		if (entityClass == null) {
+			entityClass = (Class<? extends BaseEntity>)ClassHelper.getClass(this.getClass(), 0);
+		}
 		return entityClass;
 	}
 
@@ -92,5 +104,6 @@ public class BaseDAO implements IDAO, Serializable {
 	public void setEntityClass(Class<? extends BaseEntity> entityClass) {
 		this.entityClass = entityClass;
 	}
+
 
 }

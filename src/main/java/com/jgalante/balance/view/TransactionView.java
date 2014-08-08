@@ -8,7 +8,7 @@ import com.jgalante.balance.entity.Transaction;
 
 @Named
 @ViewScoped
-public class TransactionView extends BaseView<Transaction, TransactionController>{
+public class TransactionView extends CrudView<Transaction, TransactionController> {
 
 	private static final long serialVersionUID = 1L;
 

@@ -17,6 +17,7 @@ public interface IDAO {
 	public <T extends BaseEntity> List<T> findByJpql(String jpql);
 	
 	public <T extends BaseEntity> T save(T entity);
+	public <T extends BaseEntity> T remove(T entity);
 	public <T extends BaseEntity> List<T> findAll(boolean ascending, String... sort);
 	public <T extends BaseEntity> List<T> findAll(Class<T> selectClass, boolean ascending, String... sort);
 	

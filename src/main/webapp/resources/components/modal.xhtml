@@ -1,0 +1,26 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite">
+	<cc:interface>
+		<cc:attribute name="id" type="java.lang.String" required="true" />
+		<cc:attribute name="visible" type="java.lang.Boolean" default="true" />
+		<cc:attribute name="header" type="java.lang.String" default="Title" />
+		<cc:attribute name="widgetVar" type="java.lang.String"
+			required="false" />
+		<cc:clientBehavior name="close" event="close" targets="modal" />
+
+		<cc:facet name="dialogFields" />
+	</cc:interface>
+	<cc:implementation>
+
+		<p:dialog id="modal" header="#{cc.attrs.header}"
+			widgetVar="#{cc.attrs.widgetVar}" dynamic="true"
+			visible="#{cc.attrs.visible}" modal="true" closable="false">
+			<cc:renderFacet name="dialogFields"></cc:renderFacet>
+			<cc:insertFacet name="footer" />
+		</p:dialog>
+	</cc:implementation>
+</ui:component>

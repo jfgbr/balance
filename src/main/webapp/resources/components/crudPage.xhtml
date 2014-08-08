@@ -1,0 +1,78 @@
+<ui:component xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+	xmlns:v="http://xmlns.jcp.org/jsf/composite/components">
+	<cc:interface>
+		<cc:attribute name="id" type="java.lang.String" required="true" />
+		<cc:attribute name="view" />
+		<cc:attribute name="width" default="380px" />
+
+		<cc:attribute name="formId" type="java.lang.String" required="true" />
+		<cc:attribute name="headerPanel" type="java.lang.String"
+			default="Title Panel" />
+		<cc:attribute name="headerDialog" type="java.lang.String"
+			default="#{constants['default.new']} #{cc.attrs.headerPanel} " />
+		<cc:attribute name="dialogVisibled" type="java.lang.Boolean" default="#{cc.attrs.view.viewState.new or cc.attrs.view.viewState.edit}" />
+			
+		<cc:facet name="topFields" />
+		<cc:facet name="bottomFields" />
+		<cc:facet name="dataTableColumns" />
+		<cc:facet name="dialogFields" />
+	</cc:interface>
+	<cc:implementation>
+
+		<h:form id="#{cc.attrs.formId}">
+
+			<p:panel id="panel" header="#{cc.attrs.headerPanel}"
+				style="margin-bottom:10px;" toggleable="false">
+
+				<h:panelGroup layout="block" id="data-table">
+
+					<cc:renderFacet name="topFields" />
+
+					<p:commandButton value="#{constants['default.new']}" style="margin-bottom:10px"
+						actionListener="#{cc.attrs.view.newEntity}" ajax="true"
+						update="panel" process="@this" />
+
+					<p:dataTable value="#{cc.attrs.view.dataModel}" var="item"
+						style="width:#{cc.attrs.width};" paginator="true" rows="5" lazy="true"
+						paginatorPosition="bottom"
+						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+						rowsPerPageTemplate="5,10,15">
+
+						<cc:insertChildren></cc:insertChildren>
+
+					</p:dataTable>
+					
+					<cc:renderFacet name="bottomFields" />
+					
+				</h:panelGroup>
+
+				<v:modal id="edit" header="#{cc.attrs.headerDialog}"
+					visible="#{cc.attrs.dialogVisibled}">
+					<p:ajax event="close" listener="#{cc.attrs.view.close}"
+						update=":#{cc.clientId}:#{cc.attrs.formId}" />
+					<f:facet name="dialogFields">
+						<cc:insertFacet name="dialogFields" />
+					</f:facet>
+					<f:facet name="footer">
+						<h:panelGroup layout="block" styleClass="center">
+							<p:commandButton value="#{constants['default.save']}" action="#{cc.attrs.view.save}"
+								ajax="true"
+								process="@this,modal,:#{cc.clientId}:#{cc.attrs.formId}:data-table"
+								update=":#{cc.clientId}:#{cc.attrs.formId}" />
+							<p:commandButton value="#{constants['default.close']}" action="#{cc.attrs.view.close}"
+								ajax="true" process="@this"
+								update=":#{cc.clientId}:#{cc.attrs.formId}" />
+						</h:panelGroup>
+					</f:facet>
+				</v:modal>
+				
+			</p:panel>
+		</h:form>
+
+	</cc:implementation>
+</ui:component>
