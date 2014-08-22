@@ -1,7 +1,6 @@
-package com.jgalante.balance.util;
+package com.jgalante.crud.util;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 public class ColumnModel implements Serializable {
 
@@ -9,20 +8,28 @@ public class ColumnModel implements Serializable {
 		
 		private String header;
 		private String property;
-		private BigDecimal value;
+		private Object value;
+		private boolean visible = false;
 		
 		public ColumnModel(String header) {
 			super();
 			this.header = header;
 		}
 		
-		public ColumnModel(String header, BigDecimal value) {
+		public ColumnModel(String header, Object value) {
 			super();
 			this.header = header;
 			this.value = value;
 		}
 		
-		public ColumnModel(String header, String property, BigDecimal value) {
+		public ColumnModel(String header, Object value, boolean visible) {
+			super();
+			this.header = header;
+			this.value = value;
+			this.visible = visible;
+		}
+
+		public ColumnModel(String header, String property, Object value) {
 			super();
 			this.header = header;
 			this.property = property;
@@ -37,12 +44,16 @@ public class ColumnModel implements Serializable {
 			return property;
 		}
 
-		public BigDecimal getValue() {
+		public Object getValue() {
 			return value;
 		}
 
-		public void setValue(BigDecimal value) {
+		public void setValue(Object value) {
 			this.value = value;
+		}
+
+		public boolean isVisible() {
+			return visible;
 		}
 
 	}

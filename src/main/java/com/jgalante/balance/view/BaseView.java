@@ -10,8 +10,8 @@ import javax.inject.Inject;
 import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.qualifier.Controller;
-import com.jgalante.balance.util.ClassHelper;
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.entity.BaseEntity;
+import com.jgalante.crud.util.ClassHelper;
 
 public class BaseView<T extends BaseEntity, C extends IController<T, ? extends IDAO>>
 		implements Serializable {

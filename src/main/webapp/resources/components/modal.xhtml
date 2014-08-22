@@ -16,9 +16,12 @@
 	</cc:interface>
 	<cc:implementation>
 
-		<p:dialog id="modal" header="#{cc.attrs.header}"
-			widgetVar="#{cc.attrs.widgetVar}" dynamic="true"
+		<p:dialog id="dlg-#{cc.attrs.id}" closeOnEscape="true" 
+			widgetVar="#{cc.attrs.widgetVar}" dynamic="false"
 			visible="#{cc.attrs.visible}" modal="true" closable="false">
+			<f:facet name="header">
+				<h:outputText value="#{cc.attrs.header}" />
+			</f:facet>
 			<cc:renderFacet name="dialogFields"></cc:renderFacet>
 			<cc:insertFacet name="footer" />
 		</p:dialog>

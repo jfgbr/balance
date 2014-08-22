@@ -1,4 +1,4 @@
-package com.jgalante.balance.util;
+package com.jgalante.crud.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -12,11 +12,12 @@ import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortMeta;
 import org.primefaces.model.SortOrder;
 
-import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.entity.BaseEntity;
+import com.jgalante.crud.facade.ICrudController;
 
-public class DelegateDataModel<T extends BaseEntity, C extends IController<T, ? extends IDAO>> extends LazyDataModel<T> {
+public class DelegateDataModel<T extends BaseEntity, C extends ICrudController<T, ? extends IDAO>>
+		extends LazyDataModel<T> {
 
 	private static final long serialVersionUID = 1L;
 
@@ -27,20 +28,37 @@ public class DelegateDataModel<T extends BaseEntity, C extends IController<T, ? 
 	private boolean primeira = true;
 
 	private Field fieldId;
-	
-	protected IController<T, ? extends IDAO> delegate;
+
+	protected ICrudController<T, ? extends IDAO> delegate;
 
 	private String fetchDataSource = "search";
-	
-	public DelegateDataModel(IController<T, ? extends IDAO> controller) {
-		this.delegate = controller;
+
+	public DelegateDataModel(ICrudController<T, ? extends IDAO> delegate) {
+		this.delegate = delegate;
+	}
+
+	public void reset() {
+		datasource = null;
+		currentPage = 0;
+		primeira = true;
+		fieldId = null;
+		fetchDataSource = "search";
+		setWrappedData(null);
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<T> fetchDataSource(int first, int pageSize, Map<String, Boolean> sort, Map<String, String> filters) {
+	public List<T> fetchDataSource(int first, int pageSize,
+			Map<String, Boolean> sort, Map<String, Object> filters) {
 		try {
-			Method search = delegate.getClass().getMethod(fetchDataSource, int.class, int.class, Map.class, Map.class);
-			return (List<T>) search.invoke(delegate, first, pageSize, sort, filters);
+			 Method search = delegate.getClass().getMethod(fetchDataSource,
+			 int.class, int.class, Map.class, Map.class);
+			//Method search = delegate.getClass().getMethod(fetchDataSource,
+			//		int.class, int.class, Map.class, List.class);
+//			List<Filter> listFilters = delegate
+//					.createListFiltersFromMap(filters);
+//			listFilters.addAll(createListFilterForJoinFields());
+			return (List<T>) search.invoke(delegate, first, pageSize, sort,
+					filters);
 		} catch (SecurityException e) {
 		} catch (NoSuchMethodException e) {
 		} catch (IllegalArgumentException e) {
@@ -62,9 +80,12 @@ public class DelegateDataModel<T extends BaseEntity, C extends IController<T, ? 
 	public int getTotalSize() {
 		return delegate.rowCount();
 	}
+	
 
+	
 	@Override
-	public List<T> load(int first, int pageSize, String sortField, SortOrder sortOrder, Map<String, String> filters) {
+	public List<T> load(int first, int pageSize, String sortField,
+			SortOrder sortOrder, Map<String, Object> filters) {
 
 		Map<String, Boolean> sort = null;
 		if (sortField != null) {
@@ -79,19 +100,22 @@ public class DelegateDataModel<T extends BaseEntity, C extends IController<T, ? 
 	}
 
 	@Override
-	public List<T> load(int first, int pageSize, List<SortMeta> multiSortMeta, Map<String, String> filters) {
+	public List<T> load(int first, int pageSize, List<SortMeta> multiSortMeta,
+			Map<String, Object> filters) {
 		Map<String, Boolean> sort = null;
 		if (multiSortMeta != null) {
 			sort = new HashMap<String, Boolean>();
 			for (SortMeta sortMeta : multiSortMeta) {
-				sort.put(sortMeta.getSortField(), SortOrder.DESCENDING.equals(sortMeta.getSortOrder()));
+				sort.put(sortMeta.getSortField(),
+						SortOrder.DESCENDING.equals(sortMeta.getSortOrder()));
 			}
 		}
 		return load(first, pageSize, sort, filters);
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<T> load(int first, int pageSize, Map<String, Boolean> sort, Map<String, String> filters) {
+	private List<T> load(int first, int pageSize, Map<String, Boolean> sort,
+			Map<String, Object> filters) {
 
 		if (datasource == null) {
 			datasource = new ArrayList<T>();
@@ -117,19 +141,21 @@ public class DelegateDataModel<T extends BaseEntity, C extends IController<T, ? 
 	protected int calculateCurrentPage(int first, int pageSize) {
 		return ((first / pageSize) + 1);
 	}
-	
+
 	@Override
 	public T getRowData(String rowKey) {
 		for (T bean : datasource) {
 			try {
-				if (getId(bean).equals(ClassHelper.convertIfNeeded(rowKey, getFieldId(bean).getType()))) {
-					return bean;
-				}
+				// if (getId(bean).equals(ClassHelper.convertIfNeeded(rowKey,
+				// getFieldId(bean).getType()))) {
+				return bean;
+				// }
 			} catch (IllegalArgumentException e) {
 			} catch (ClassCastException e) {
 			} catch (UnsupportedOperationException e) {
-			} catch (IllegalAccessException e) {
 			}
+			// catch (IllegalAccessException e) {
+			// }
 		}
 
 		return super.getRowData(rowKey);
@@ -157,7 +183,8 @@ public class DelegateDataModel<T extends BaseEntity, C extends IController<T, ? 
 		return fieldId;
 	}
 
-	private Object getId(T object) throws IllegalArgumentException, IllegalAccessException, UnsupportedOperationException {
+	private Object getId(T object) throws IllegalArgumentException,
+			IllegalAccessException, UnsupportedOperationException {
 		return getFieldId(object).get(object);
 	}
 }

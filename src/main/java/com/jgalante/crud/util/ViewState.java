@@ -1,4 +1,4 @@
-package com.jgalante.balance.util;
+package com.jgalante.crud.util;
 
 public class ViewState {
 

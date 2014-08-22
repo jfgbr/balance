@@ -1,17 +1,22 @@
-package com.jgalante.balance.util;
+package com.jgalante.crud.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.el.PropertyNotFoundException;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -87,7 +92,7 @@ public class ClassHelper {
 
 				if (value.toString().contains("/")) {
 					simpleDateFormat = new SimpleDateFormat(
-							"dd/MM/yyyy HH:mm:ss");
+							"MM/dd/yyyy HH:mm:ss");
 				} else {
 					simpleDateFormat = new SimpleDateFormat("ddMMyyyy HH:mm:ss");
 				}
@@ -206,5 +211,89 @@ public class ClassHelper {
 	    }
 
 	    return fields;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static Class<?> getExpectedClass(Class<?> rootClass,
+			String propertyPath) throws PropertyNotFoundException {
+		if (propertyPath == null || "".equals("propertyPath"))
+			return rootClass;
+		String[] chain = propertyPath.split("\\.");
+
+		Class<?> klass = rootClass;
+
+		for (String property : chain) {
+			String getMethod = "get" + property.substring(0, 1).toUpperCase()
+					+ property.substring(1);
+			String isMethod = "is" + property.substring(0, 1).toUpperCase()
+					+ property.substring(1);
+			boolean found = false;
+
+			for (Method method : klass.getMethods()) {
+				if (method.getParameterTypes().length == 0
+						&& (method.getName().equals(getMethod) || method
+								.getName().equals(isMethod))) {
+					klass = method.getReturnType();
+					
+					Type t = method.getGenericReturnType();
+				    if(t instanceof ParameterizedType){
+				    	//http://stackoverflow.com/questions/182872/how-to-test-whether-method-return-type-matches-liststring
+				    	
+				    	 ParameterizedType pt = (ParameterizedType)t;
+				         Type[] actualGenericParameters = pt.getActualTypeArguments();
+				         for (int i = 0; i < actualGenericParameters.length; i++) {
+				             if (actualGenericParameters[i] instanceof Class) {
+//				                 System.out.println(((Class) actualGenericParameters[i]).getName());
+				                 klass = (Class) actualGenericParameters[i];
+				                 break;
+				             } else {
+				                 System.out.println("\tFailure generic parameter is not a class");
+				             }
+				         }
+				    }
+					
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				throw new PropertyNotFoundException("Could not find property '"
+						+ propertyPath + "' on class " + rootClass + ".");
+		}
+
+		return klass;
+	}
+
+	public static String convertDateToString(Date date) {
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+
+		// Using DateFormat format method we can create a string 
+		// representation of a date with the defined format.
+		return df.format(date);
+	}
+
+	public static Calendar addDaystoCalendar(Calendar calendar, Integer numDays) {
+		Calendar newCalendar = (Calendar) calendar.clone();
+		newCalendar.add(Calendar.DAY_OF_MONTH, numDays);
+		return newCalendar;
+	}
+	
+	public static Date addDaystoDate(Calendar calendar, Integer numDays) {
+		Calendar newCalendar = (Calendar) calendar.clone();
+		newCalendar.add(Calendar.DAY_OF_MONTH, numDays);
+		return newCalendar.getTime();
+	}
+	
+	public static Date addDaystoDate(Date date, Integer numDays) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		return addDaystoDate(calendar, numDays);
+	}
+	
+	public static Date addMonthstoDate(Date date, Integer numMonths) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH, numMonths);
+		return calendar.getTime();
 	}
 }

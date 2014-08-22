@@ -1,9 +1,9 @@
 package com.jgalante.balance.facade;
 
 import java.util.List;
-import java.util.Map;
 
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.entity.BaseEntity;
+
 
 public interface IController<T extends BaseEntity, D extends IDAO> {
 
@@ -18,10 +18,6 @@ public interface IController<T extends BaseEntity, D extends IDAO> {
 	public T remove(T entity);
 	public List<T> findAll();
 	
-	public List<T> search(int first, int pageSize, Map<String, Boolean> sort,
-			Map<String, String> filters);
-	
-	public int rowCount();
 	
 //	public IDAO getDAO();
 }

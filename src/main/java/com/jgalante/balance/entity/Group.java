@@ -19,6 +19,7 @@ public class Group {
 	private boolean showing = false;
 	private Set<Group> subCategories;
 	private boolean hasSubCategories = false;
+	private BigDecimal totalValue;
 
 	public Group() {
 		super();
@@ -33,7 +34,7 @@ public class Group {
 		} else {
 			this.transaction = transaction;
 			addValue(this.getTransaction().getTransactionDate(),
-					this.transaction.getValue());
+					this.transaction.getValue(), 0, 11);
 		}
 		if (this.category.getPerson() != null) {
 			name = " - " + this.category.getPerson().getName();
@@ -45,16 +46,17 @@ public class Group {
 		}
 	}
 
-	public void addValue(Date date, BigDecimal value) {
+	public void addValue(Date date, BigDecimal value, int monthStart, int monthEnd) {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(date);
-		Integer month = cal.get(Calendar.MONTH);
+		Integer month = cal.get(Calendar.MONTH)- monthStart;
 
 		if (values == null) {
 			values = new LinkedList<BigDecimal>();
-			for (int i = 0; i < 12; i++) {
+			for (int i = 0; i < monthEnd + 1 - monthStart; i++) {
 				values.add(null);
 			}
+			totalValue = BigDecimal.ZERO;
 		}
 		BigDecimal monthValue = values.get(month);
 		if (monthValue == null) {
@@ -62,6 +64,7 @@ public class Group {
 		} else {
 			values.set(month, monthValue.add(value));
 		}
+		totalValue = totalValue.add(value);
 	}
 	
 	public void addSubCategories(Group subCategory) {
@@ -120,6 +123,10 @@ public class Group {
 		this.values = values;
 	}
 	
+	public BigDecimal getTotalValue() {
+		return totalValue;
+	}
+
 	public boolean isShowing() {
 		return showing;
 	}

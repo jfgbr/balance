@@ -10,9 +10,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.qualifier.Controller;
-import com.jgalante.balance.util.ClassHelper;
-import com.jgalante.jgcrud.entity.BaseEntity;
-import com.jgalante.jgcrud.util.Util;
+import com.jgalante.crud.entity.BaseEntity;
+import com.jgalante.crud.util.ClassHelper;
+import com.jgalante.crud.util.Util;
 
 public class ControllerProducer {
 

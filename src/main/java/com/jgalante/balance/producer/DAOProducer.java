@@ -10,8 +10,8 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.qualifier.DAO;
-import com.jgalante.jgcrud.entity.BaseEntity;
-import com.jgalante.jgcrud.util.Util;
+import com.jgalante.crud.entity.BaseEntity;
+import com.jgalante.crud.util.Util;
 
 public class DAOProducer {
 	

@@ -1,15 +1,16 @@
-package com.jgalante.balance.view;
+package com.jgalante.crud.view;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
-import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
-import com.jgalante.balance.util.DelegateDataModel;
-import com.jgalante.balance.util.ViewState;
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.balance.view.BaseView;
+import com.jgalante.crud.entity.BaseEntity;
+import com.jgalante.crud.facade.ICrudController;
+import com.jgalante.crud.util.DelegateDataModel;
+import com.jgalante.crud.util.ViewState;
 
-public class CrudView<T extends BaseEntity, C extends IController<T, ? extends IDAO>>
+public class CrudView<T extends BaseEntity, C extends ICrudController<T, ? extends IDAO>>
 		extends BaseView<T, C> {
 
 	private static final long serialVersionUID = 1L;
@@ -23,53 +24,48 @@ public class CrudView<T extends BaseEntity, C extends IController<T, ? extends I
 	public void edit() {
 		setViewState(ViewState.EDIT);
 		setEntity((T) getDataModel().getRowData());
-//		setId(getEntity().getId());
-//		setEntity(carregaEntidade());
 	}
 
 	public void remove() {
 		try {
 			getController().remove(((T) dataModel.getRowData()));
-//			total--;
-			cleanEntity();
+			
+//			cleanEntity();
+
+			list();
+			
 			FacesContext.getCurrentInstance().addMessage(
 					null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
-							getMessage("remover.sucesso"), null));
-
-			list();
+							getMessage("remove.success"), null));
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(
 					null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							getMessage("erro"), null));
+							getMessage("error"), null));
 		}
 	}
 
-	public void save() {
+	public Boolean save() {
 
 		try {
 			getController().save(getEntity());
-//			total++;
-			cleanEntity();
+
+			newEntity();
+			
 			FacesContext.getCurrentInstance().addMessage(
 					null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO,
 							getMessage("save.success"), null));
-
-			list();
-
+			return true;
 		} catch (Exception e) {
 			FacesContext.getCurrentInstance().addMessage(
 					null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR,
-							getMessage("save.error"), null));
+							getMessage("error"), null));
 		}
 
-	}
-
-	public void remover() {
-
+		return false;
 	}
 
 	public void cancel() {
@@ -92,9 +88,8 @@ public class CrudView<T extends BaseEntity, C extends IController<T, ? extends I
 	
 	protected void cleanEntity(){
 		setEntity(null);
-//		id = null;
 		//TODO: verify first and total page parameters
-		dataModel.setWrappedData(getDataModel().load(0, 10, null, null, null));
+//		dataModel.setWrappedData(getDataModel().load(0, 10, null, null, null));
 //		listaEntidades = null;
 	}
 
@@ -108,10 +103,15 @@ public class CrudView<T extends BaseEntity, C extends IController<T, ? extends I
 
 	public DelegateDataModel<T,C> getDataModel() {
 		if (dataModel == null) {
-			dataModel = new DelegateDataModel<T, C>(getController());
+			dataModel = new DelegateDataModel<T, C>((ICrudController<T, ? extends IDAO>) getController());
 		}
 		
 		return dataModel;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public C getController() {
+		return (C)super.getController();
+	}
 }

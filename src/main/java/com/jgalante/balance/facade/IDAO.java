@@ -4,7 +4,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.entity.BaseEntity;
+
 
 public interface IDAO {
 	

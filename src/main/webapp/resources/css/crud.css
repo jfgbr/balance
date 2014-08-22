@@ -1,0 +1,75 @@
+body {
+	background-color: #EAECEE;
+	font-family: Verdana, sans-serif;
+	height: 100%;
+	font-size: 14px;
+}
+
+.ui-widget,.ui-widget .ui-widget {
+	font-size: 90% !important;
+}
+
+#header {
+	text-align: center;
+}
+
+#header h1 {
+	font-size: 250%;
+}
+
+.sidebar {
+	width: 120px;
+	min-height: 500px;
+	text-align: left;
+	vertical-align: top;
+}
+
+#container {
+	vertical-align: top;
+}
+
+.content {
+	min-height: 500px;
+	
+}
+
+.linha {
+	width: 5px;
+	border-left: 1px solid;
+}
+
+#footer {
+	text-align: center;
+	padding-top: 8px;
+	border-top: 1px solid #c0c0c0;
+	clear: both;
+}
+
+.center {
+	text-align: center;
+}
+
+.btnColunaAcoes {
+	text-align: center;
+	width: 30px;
+	white-space: nowrap;
+}
+
+.btnSaveIcon {
+	background: url(../../resources/images/icons/btnSaveIcon.png) !important;
+}
+
+.usuarioIcon {
+	background: url(../../resources/images/icons/btnUsuarioIcon.png)
+		no-repeat 2%;
+	padding-left: 22px !important;
+}
+
+.ui-panelgrid tr {
+	border: 0 none !important;
+}
+
+.ui-panelgrid td{
+	border: 0 none !important;
+	padding: 4px 10px;
+}

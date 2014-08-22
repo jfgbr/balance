@@ -7,7 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.entity.BaseEntity;
+
 
 @Entity(name = "person")
 public class Person extends BaseEntity {

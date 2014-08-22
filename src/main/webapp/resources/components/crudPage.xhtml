@@ -7,7 +7,7 @@
 	xmlns:v="http://xmlns.jcp.org/jsf/composite/components">
 	<cc:interface>
 		<cc:attribute name="id" type="java.lang.String" required="true" />
-		<cc:attribute name="view" />
+		<cc:attribute name="view" type="com.jgalante.crud.view.CrudView" />
 		<cc:attribute name="width" default="380px" />
 
 		<cc:attribute name="formId" type="java.lang.String" required="true" />
@@ -15,9 +15,12 @@
 			default="Title Panel" />
 		<cc:attribute name="headerDialog" type="java.lang.String"
 			default="#{constants['default.new']} #{cc.attrs.headerPanel} " />
-		<cc:attribute name="dialogVisibled" type="java.lang.Boolean" default="#{cc.attrs.view.viewState.new or cc.attrs.view.viewState.edit}" />
-			
+		<cc:attribute name="dialogVisible" type="java.lang.Boolean" default="#{cc.attrs.view.viewState.new or cc.attrs.view.viewState.edit}" />
+		<cc:attribute name="tableVisible" type="java.lang.Boolean" default="true" />
+		<cc:attribute name="update" default=""/>
+		
 		<cc:facet name="topFields" />
+		<cc:facet name="dataField" />
 		<cc:facet name="bottomFields" />
 		<cc:facet name="dataTableColumns" />
 		<cc:facet name="dialogFields" />
@@ -27,7 +30,7 @@
 		<h:form id="#{cc.attrs.formId}">
 
 			<p:panel id="panel" header="#{cc.attrs.headerPanel}"
-				style="margin-bottom:10px;" toggleable="false">
+				style="margin-bottom:10px;width:#{cc.attrs.width};" toggleable="false">
 
 				<h:panelGroup layout="block" id="data-table">
 
@@ -36,12 +39,14 @@
 					<p:commandButton value="#{constants['default.new']}" style="margin-bottom:10px"
 						actionListener="#{cc.attrs.view.newEntity}" ajax="true"
 						update="panel" process="@this" />
+					
+					<cc:renderFacet name="dataField" />
 
 					<p:dataTable value="#{cc.attrs.view.dataModel}" var="item"
-						style="width:#{cc.attrs.width};" paginator="true" rows="5" lazy="true"
+						style="width:#{cc.attrs.width};" paginator="true" rows="15" lazy="true"
 						paginatorPosition="bottom"
 						paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-						rowsPerPageTemplate="5,10,15">
+						rowsPerPageTemplate="5,10,15" rendered="#{cc.attrs.tableVisible}">
 
 						<cc:insertChildren></cc:insertChildren>
 
@@ -50,26 +55,28 @@
 					<cc:renderFacet name="bottomFields" />
 					
 				</h:panelGroup>
-
-				<v:modal id="edit" header="#{cc.attrs.headerDialog}"
-					visible="#{cc.attrs.dialogVisibled}">
-					<p:ajax event="close" listener="#{cc.attrs.view.close}"
-						update=":#{cc.clientId}:#{cc.attrs.formId}" />
-					<f:facet name="dialogFields">
-						<cc:insertFacet name="dialogFields" />
-					</f:facet>
-					<f:facet name="footer">
-						<h:panelGroup layout="block" styleClass="center">
-							<p:commandButton value="#{constants['default.save']}" action="#{cc.attrs.view.save}"
-								ajax="true"
-								process="@this,modal,:#{cc.clientId}:#{cc.attrs.formId}:data-table"
-								update=":#{cc.clientId}:#{cc.attrs.formId}" />
-							<p:commandButton value="#{constants['default.close']}" action="#{cc.attrs.view.close}"
-								ajax="true" process="@this"
-								update=":#{cc.clientId}:#{cc.attrs.formId}" />
-						</h:panelGroup>
-					</f:facet>
-				</v:modal>
+				
+				<h:panelGroup layout="block" id="modal">
+					<v:modal id="edit" header="#{cc.attrs.headerDialog}"
+						visible="#{cc.attrs.dialogVisible}">
+						<p:ajax event="close" listener="#{cc.attrs.view.close}"
+							update=":#{cc.clientId}:#{cc.attrs.formId}" />
+						<f:facet name="dialogFields">
+							<cc:insertFacet name="dialogFields" />
+						</f:facet>
+						<f:facet name="footer">
+							<h:panelGroup layout="block" styleClass="center">
+								<p:commandButton value="#{constants['default.save']}" action="#{cc.attrs.view.save}"
+									ajax="true"
+									process=":#{cc.clientId}:#{cc.attrs.formId}:edit"
+									update=":#{cc.clientId}:#{cc.attrs.formId}:modal,:#{cc.clientId}:#{cc.attrs.formId}:data-table,#{cc.attrs.update}" />
+								<p:commandButton value="#{constants['default.close']}" action="#{cc.attrs.view.close}"
+									ajax="true" process="@this"
+									update=":#{cc.clientId}:#{cc.attrs.formId}" />
+							</h:panelGroup>
+						</f:facet>
+					</v:modal>
+				</h:panelGroup>
 				
 			</p:panel>
 		</h:form>

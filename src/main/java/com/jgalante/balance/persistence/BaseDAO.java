@@ -9,9 +9,8 @@ import javax.persistence.Query;
 import javax.transaction.Transactional;
 
 import com.jgalante.balance.facade.IDAO;
-import com.jgalante.balance.util.ClassHelper;
-import com.jgalante.jgcrud.annotation.DataRepository;
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.annotation.DataRepository;
+import com.jgalante.crud.entity.BaseEntity;
 
 public class BaseDAO implements IDAO, Serializable {
 
@@ -42,10 +41,12 @@ public class BaseDAO implements IDAO, Serializable {
 		return getEntityManager().merge(entity);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	@Transactional
 	public <T extends BaseEntity> T remove(T entity) {
-		getEntityManager().remove(entity);
+		T removeEntity = (T) (getEntityManager().contains(entity) ? entity : getEntityManager().getReference(getEntityClass(), entity.getId()));
+		getEntityManager().remove(removeEntity);
 		return entity;
 	}
 	
@@ -91,12 +92,12 @@ public class BaseDAO implements IDAO, Serializable {
 		return entityManager;
 	}
 
-	@SuppressWarnings("unchecked")
+//	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends BaseEntity> getEntityClass() {
-		if (entityClass == null) {
-			entityClass = (Class<? extends BaseEntity>)ClassHelper.getClass(this.getClass(), 0);
-		}
+//		if (entityClass == null) {
+//			entityClass = (Class<? extends BaseEntity>)ClassHelper.getClass(this.getClass(), 0);
+//		}
 		return entityClass;
 	}
 

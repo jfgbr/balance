@@ -2,7 +2,8 @@ package com.jgalante.balance.entity;
 
 import javax.persistence.Column;
 
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.entity.BaseEntity;
+
 
 //@Entity(name="TP_TRANSACTION")
 public class TransactionType extends BaseEntity {

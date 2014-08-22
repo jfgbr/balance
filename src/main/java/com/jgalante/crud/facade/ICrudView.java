@@ -1,4 +1,4 @@
-package com.jgalante.balance.facade;
+package com.jgalante.crud.facade;
 
 public interface ICrudView {
 

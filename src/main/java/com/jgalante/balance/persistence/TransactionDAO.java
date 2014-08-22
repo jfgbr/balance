@@ -1,19 +1,53 @@
 package com.jgalante.balance.persistence;
 
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 
 import com.jgalante.balance.entity.Category;
+import com.jgalante.balance.entity.Transaction;
+import com.jgalante.crud.entity.BaseEntity;
+import com.jgalante.crud.persistence.CrudDAO;
 
-public class TransactionDAO extends BaseDAO {
+public class TransactionDAO extends CrudDAO {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public <T extends BaseEntity> List<T> search(int first, int pageSize,
+			Map<String, Boolean> sort, Map<String, Object> filters) {
+		addJoinFields("category");
+		Map<String, Boolean> tmpSort = new LinkedHashMap<String, Boolean>();
+		if (sort != null) {
+			tmpSort.putAll(sort);			
+		}
+		tmpSort.put("transactionDate", true);
+		return super.search(first, pageSize, tmpSort, filters);
+	}
 	
 	public List<Category> findCategories() {
 		CriteriaQuery<Category> cq = getEntityManager().getCriteriaBuilder().createQuery(Category.class);
 		cq.select(cq.from(Category.class));
 		return getEntityManager().createQuery(cq).getResultList();
+	}
+
+	public BigDecimal currentBalance() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT SUM(t.value) FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		sb.append(" LEFT JOIN t.category c ");
+		sb.append(" WHERE c.positive is :positive ");
+		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
+		query.setParameter("positive", true);
+		BigDecimal income = query.getSingleResult();
+		query.setParameter("positive", false);
+		BigDecimal outcome = query.getSingleResult();
+		return income.subtract(outcome);
 	}
 	
 	/*@Transactional

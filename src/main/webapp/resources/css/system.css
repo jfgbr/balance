@@ -18,7 +18,7 @@ body {
 }
 
 .trans-col-01 {
-	width: 400px;
+	width: 200px;
 	white-space: nowrap;
 }
 
@@ -29,7 +29,7 @@ body {
 }
 
 .trans-row-01 {
-	background-color: #76a5af;
+	background-color: #dddddd;/*#76a5af;*/
 	color: white;
 	font-weight: bold;
 	font-size: 1.1em;
@@ -40,33 +40,34 @@ body {
 	background-color: white;
 }
 
+.trans-value-positive-true {
+	color: green;
+}
 
+.trans-value-positive-false {
+	color: red;
+}
+
+.trans-value-total {
+	color: black;
+	font-weight: bold;
+}
 
 .center-container {
   position: relative;
 }
 
-.absolute-center {
-  width: 50%;
-  height: 50%;
-  overflow: auto;
-  margin: auto;
-  position: absolute;
-  top: 0; left: 0; bottom: 0; right: 0;
-}
 
-.absolute-center.is-right {
-  left: auto; right: 20px;
-  text-align: right;
-}
-
-.absolute-center.is-left {
-  right: auto; left: 20px;
-  text-align: left;
-}
+/*.ui-datatable table {
+    width: 100px !important;
+}*/
 
 .ui-datatable .ui-datatable-header {
 	font-size: 1.4em;
 	font-weight: bold;
 	border: 1px solid #D1D1D1;
+}
+
+.dates-tbl-header {
+	width: 90px;
 }

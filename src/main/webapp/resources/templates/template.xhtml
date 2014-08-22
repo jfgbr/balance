@@ -11,14 +11,15 @@
 	<ui:insert name="styles" />
 </h:head>
 <h:body>
-	<p:outputPanel id="grp-messages" layout="block" autoUpdate="true">
-		<p:dialog id="grp-dlg-messages" header="Error"  
-			 draggable="false" modal="true" resizable="false"
-		     visible="#{not empty facesContext.maximumSeverity and facesContext.maximumSeverity.ordinal eq 2}">
-		    <p:messages globalOnly="true" />
-		</p:dialog>
-	</p:outputPanel>
-	<h:panelGrid columns="2" width="100%" columnClasses="sidebar,content">
+	<script type="text/javascript">
+		$(document).ready(resize);
+		$(window).bind('resize', resize);
+		function resize() {
+			var w = $(window).innerWidth()-125;
+			$('#content').css('width', w);
+		}
+	</script>
+	<h:panelGrid columns="2" columnClasses="sidebar,content">
 		<h:panelGroup id="sidebar" layout="block">
 			<ui:include src="menu.xhtml" />
 		</h:panelGroup>
@@ -29,5 +30,23 @@
 			<ui:insert name="content">Main Content</ui:insert>
 		</h:panelGroup>
 	</h:panelGrid>
+	<p:outputPanel id="grp-messages" layout="block" autoUpdate="true">
+		
+		<p:dialog id="grp-dlg-messages" header="Error"  
+			 draggable="false" modal="true" resizable="false"
+		     visible="#{not empty facesContext.maximumSeverity and facesContext.maximumSeverity.ordinal eq 2}">
+		    <p:messages globalOnly="true" />
+		</p:dialog>
+		
+		<p:growl id="grow-messages-info" globalOnly="true" severity="info">
+		</p:growl>
+		<ui:remove>
+			<p:dialog id="grp-dlg-messages-info" header="Info"  
+				 draggable="false" modal="true" resizable="false"
+			     visible="#{not empty facesContext.maximumSeverity and facesContext.maximumSeverity.ordinal eq 0}">
+			    <p:messages globalOnly="true" />
+			</p:dialog>
+		</ui:remove>
+	</p:outputPanel>
 </h:body>
 </html>

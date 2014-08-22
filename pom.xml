@@ -17,11 +17,18 @@
 
 	<dependencies>
 
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.jgalante</groupId> -->
+<!-- 			<artifactId>jgalante-crud</artifactId> -->
+<!-- 			<version>0.0.1</version> -->
+<!-- 			<scope>compile</scope> -->
+<!-- 		</dependency> -->
+		
 		<dependency>
 			<groupId>com.jgalante</groupId>
-			<artifactId>jgalante-crud</artifactId>
-			<version>0.0.1</version>
-			<scope>compile</scope>
+			<artifactId>jgalante-faces-ui</artifactId>
+			<version>1.0.0</version>
+<!-- 			<scope>compile</scope> -->
 		</dependency>
 
 		<dependency>

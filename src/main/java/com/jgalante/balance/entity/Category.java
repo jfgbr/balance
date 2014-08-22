@@ -9,9 +9,10 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Transient;
 
-import com.jgalante.jgcrud.entity.BaseEntity;
+import com.jgalante.crud.entity.BaseEntity;
 
 @Entity(name = "category")
 public class Category extends BaseEntity {
@@ -31,6 +32,7 @@ public class Category extends BaseEntity {
 
 	// @OneToMany(fetch = FetchType.EAGER, mappedBy = "parent")
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+	@OrderBy("nr_order ASC")
 	private Set<Category> subCategories;
 
 	// @OneToMany(fetch = FetchType.EAGER, mappedBy = "category")
