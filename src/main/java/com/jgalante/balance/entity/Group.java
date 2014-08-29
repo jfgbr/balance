@@ -19,6 +19,7 @@ public class Group {
 	private boolean showing = false;
 	private Set<Group> subCategories;
 	private boolean hasSubCategories = false;
+	private BigDecimal totalParcialValue;
 	private BigDecimal totalValue;
 
 	public Group() {
@@ -34,7 +35,7 @@ public class Group {
 		} else {
 			this.transaction = transaction;
 			addValue(this.getTransaction().getTransactionDate(),
-					this.transaction.getValue(), 0, 11);
+					this.transaction.getValue(), 0, 11, category.getPositive());
 		}
 		if (this.category.getPerson() != null) {
 			name = " - " + this.category.getPerson().getName();
@@ -46,7 +47,7 @@ public class Group {
 		}
 	}
 
-	public void addValue(Date date, BigDecimal value, int monthStart, int monthEnd) {
+	public void addValue(Date date, BigDecimal value, int monthStart, int monthEnd, Boolean positive) {
 		Calendar cal = new GregorianCalendar();
 		cal.setTime(date);
 		Integer month = cal.get(Calendar.MONTH)- monthStart;
@@ -56,15 +57,19 @@ public class Group {
 			for (int i = 0; i < monthEnd + 1 - monthStart; i++) {
 				values.add(null);
 			}
-			totalValue = BigDecimal.ZERO;
+			totalParcialValue = BigDecimal.ZERO;
 		}
 		BigDecimal monthValue = values.get(month);
 		if (monthValue == null) {
-			values.set(month, value);
-		} else {
+			monthValue = BigDecimal.ZERO;
+		} 
+		if (positive) {
 			values.set(month, monthValue.add(value));
+			totalParcialValue = totalParcialValue.add(value);
+		} else {
+			values.set(month, monthValue.subtract(value));
+			totalParcialValue = totalParcialValue.subtract(value);
 		}
-		totalValue = totalValue.add(value);
 	}
 	
 	public void addSubCategories(Group subCategory) {
@@ -123,8 +128,16 @@ public class Group {
 		this.values = values;
 	}
 	
+	public BigDecimal getTotalParcialValue() {
+		return totalParcialValue;
+	}
+	
 	public BigDecimal getTotalValue() {
 		return totalValue;
+	}
+	
+	public void setTotalValue(BigDecimal totalValue) {
+		this.totalValue = totalValue;
 	}
 
 	public boolean isShowing() {

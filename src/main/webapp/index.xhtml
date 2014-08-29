@@ -63,6 +63,7 @@
 							<c:forEach items="#{groupView.dates}" var="column">
 								<p:column headerText="#{column.header}" styleClass="dates-tbl-header" />
 							</c:forEach>
+							<p:column headerText="Total Parcial" styleClass="dates-tbl-header" />
 							<p:column headerText="Total" styleClass="dates-tbl-header" />
 						</p:row>
 					</p:columnGroup>
@@ -93,6 +94,13 @@
 							<f:convertNumber type="currency" currencySymbol="" />
 						</h:outputText>
 					</p:columns>
+					
+					<p:column styleClass="trans-col-02"
+						rendered="#{group.onlyCategory or group.showing}">
+						<h:outputText value="#{group.totalParcialValue}" styleClass="trans-value-total">
+							<f:convertNumber type="currency" currencySymbol="R$ " />
+						</h:outputText>
+					</p:column>
 					
 					<p:column styleClass="trans-col-02"
 						rendered="#{group.onlyCategory or group.showing}">

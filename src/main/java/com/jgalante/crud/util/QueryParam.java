@@ -49,6 +49,8 @@ public class QueryParam implements Serializable {
 	private Class<?> entityClass;
 
 	private boolean distinct;
+	
+	private boolean firstFilter = true;
 
 	public QueryParam(boolean includeJoins, Class<?> entityClass) {
 		super();
@@ -98,7 +100,7 @@ public class QueryParam implements Serializable {
 		List<Filter> listFilters = new ArrayList<Filter>();
 		Class<?> originalClass;
 		for (Map.Entry<String, Object> filter : filters.entrySet()) {
-			originalClass = ClassHelper.getExpectedClass(entityClass,
+			originalClass = Util.getExpectedClass(entityClass,
 					filter.getKey());
 			Filter itemFilter = defineFilter(originalClass, filter.getKey(),
 					filter.getValue());
@@ -110,7 +112,7 @@ public class QueryParam implements Serializable {
 
 	public Filter defineFilter(Class<?> originalClass, String key, Object value) {
 
-		Filter itemFilter = new Filter(key, ClassHelper.convertIfNeeded(value,
+		Filter itemFilter = new Filter(key, Util.convertIfNeeded(value,
 				originalClass));
 
 		if (itemFilter.getValue() == null) {
@@ -119,7 +121,7 @@ public class QueryParam implements Serializable {
 			List<String> values = Arrays.asList(itemFilter.getValue()
 					.toString().split(";"));
 			if (values.size() > 1) {
-				if (ClassHelper.isAssignableFrom(originalClass, Date.class)) {
+				if (Util.isAssignableFrom(originalClass, Date.class)) {
 					itemFilter.setOp(Filter.Operator.BETWEEN);
 					itemFilter.setFilters(new ArrayList<Filter>());
 
@@ -145,21 +147,21 @@ public class QueryParam implements Serializable {
 					itemFilter.setFilters(new ArrayList<Filter>());
 					for (String itemValue : values) {
 						itemFilter.getFilters().add(
-								new Filter(itemFilter.getKey(), ClassHelper
+								new Filter(itemFilter.getKey(), Util
 										.convertIfNeeded(itemValue,
 												originalClass)));
 					}
 				}
-			} else if (ClassHelper.isAssignableFrom(originalClass,
+			} else if (Util.isAssignableFrom(originalClass,
 					Boolean.class)) {
 				if (new Boolean(itemFilter.getValue().toString())) {
 					itemFilter.setOp(Filter.Operator.IS_TRUE);
 				} else {
 					itemFilter.setOp(Filter.Operator.IS_FALSE);
 				}
-			} else if (ClassHelper.isAssignableFrom(Enum.class, originalClass)) {
+			} else if (Util.isAssignableFrom(Enum.class, originalClass)) {
 				itemFilter.setOp(Filter.Operator.EQUAL);
-			} else if (ClassHelper.isAssignableFrom(originalClass, Date.class)) {
+			} else if (Util.isAssignableFrom(originalClass, Date.class)) {
 
 				itemFilter.setOp(Filter.Operator.BETWEEN);
 				itemFilter.setFilters(new ArrayList<Filter>());
@@ -169,27 +171,27 @@ public class QueryParam implements Serializable {
 				minDate.set(Calendar.HOUR_OF_DAY, 0);
 				minDate.set(Calendar.MINUTE, 0);
 				minDate.set(Calendar.SECOND, 0);
-				Calendar maxDate = ClassHelper.addDaystoCalendar(minDate, 1);
+				Calendar maxDate = Util.addDaystoCalendar(minDate, 1);
 
 				itemFilter.getFilters().add(new Filter(key, minDate.getTime()));
 				itemFilter.getFilters().add(new Filter(key, maxDate.getTime()));
 
-			} else if (ClassHelper
+			} else if (Util
 					.isAssignableFrom(originalClass, String.class)) {
 				itemFilter.setOp(Filter.Operator.LIKE);
 				itemFilter.setValue("%"
 						+ itemFilter.getValue().toString().toLowerCase() + "%");
 
-			} else if (ClassHelper.isAssignableFrom(originalClass,
+			} else if (Util.isAssignableFrom(originalClass,
 					BigInteger.class)) {
 
-				itemFilter.setValue(ClassHelper.convertIfNeeded(
+				itemFilter.setValue(Util.convertIfNeeded(
 						itemFilter.getValue(), originalClass));
 
-			} else if (ClassHelper.isAssignableFrom(originalClass,
+			} else if (Util.isAssignableFrom(originalClass,
 					BigDecimal.class)) {
 
-				itemFilter.setValue(ClassHelper.convertIfNeeded(
+				itemFilter.setValue(Util.convertIfNeeded(
 						itemFilter.getValue(), originalClass));
 
 				Double minNum = Double.parseDouble(itemFilter.getValue()
@@ -214,10 +216,12 @@ public class QueryParam implements Serializable {
 	}
 
 	public void addFilters(List<Filter> filters) {
-		if (this.filters == null) {
-			this.filters = new LinkedHashSet<Filter>();
+		if (filters != null) {
+			if (this.filters == null) {
+				this.filters = new LinkedHashSet<Filter>();
+			}
+			getFilters().addAll(filters);
 		}
-		getFilters().addAll(filters);
 	}
 	
 	public void addFilter(Filter filter) {
@@ -383,16 +387,16 @@ public class QueryParam implements Serializable {
 		// }
 
 		StringBuilder sb = new StringBuilder();
-		boolean first = true;
+		firstFilter = true;
 		if (getFilters() != null) {
 			LinkedList<Filter> tmpFilters = new LinkedList<Filter>(getFilters());
 			for (Filter filter : tmpFilters) {
 				if (!Operator.JOIN.equals(filter.getOp())) {
-					if (first) {
+					if (firstFilter) {
 						sb.append("WHERE ");
-						first = false;
 					}
 					sb.append(createWhere(filter));
+					firstFilter = false;
 				} else {
 					addJoinFilter(filter);
 					getFilters().remove(filter);
@@ -489,13 +493,13 @@ public class QueryParam implements Serializable {
 		try {
 			switch (filter.getOp()) {
 			case AND:
-				first = true;
+//				first = true;
 				sb.append(" ( ");
 				for (Filter filterItem : filter.getFilters()) {
-					if (!first) {
+					if (!firstFilter) {
 						sb.append(" AND ");
 					} else {
-						first = false;
+						firstFilter = false;
 					}
 					sb.append(createWhere(filterItem));
 				}
@@ -504,13 +508,13 @@ public class QueryParam implements Serializable {
 				break;
 
 			case OR:
-				first = true;
+//				first = true;
 				sb.append(" ( ");
 				for (Filter filterItem : filter.getFilters()) {
-					if (!first) {
+					if (!firstFilter) {
 						sb.append(" OR ");
 					} else {
-						first = false;
+						firstFilter = false;
 					}
 					sb.append(createWhere(filterItem));
 				}
@@ -597,6 +601,13 @@ public class QueryParam implements Serializable {
 				filter.setAlias(generateAliasParameter(filter.getKey()));
 				writeAlias(filter, sb);
 				sb.append(" >= ");
+				writeAliasParameter(filter, sb);
+				break;
+			
+			case EQUAL_LESS:
+				filter.setAlias(generateAliasParameter(filter.getKey()));
+				writeAlias(filter, sb);
+				sb.append(" <= ");
 				writeAliasParameter(filter, sb);
 				break;
 

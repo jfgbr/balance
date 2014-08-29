@@ -1,5 +1,6 @@
 package com.jgalante.balance.persistence;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -11,9 +12,10 @@ import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
 import com.jgalante.balance.entity.Category;
+import com.jgalante.balance.entity.Transaction;
 import com.jgalante.crud.entity.BaseEntity;
 import com.jgalante.crud.persistence.CrudDAO;
-import com.jgalante.crud.util.ClassHelper;
+import com.jgalante.crud.util.Util;
 import com.jgalante.crud.util.Filter;
 import com.jgalante.crud.util.Filter.Operator;
 
@@ -22,16 +24,21 @@ public class CategoryDAO extends CrudDAO{
 	private static final long serialVersionUID = 1L;
 
 	
+	@Transactional
 	public List<Category> findCategoryByParent(Long idParent) {
+//		(Long id, String text, Long idParent, String textParent, Person person,
+//				Boolean positive, Integer order)
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT object(o) FROM ");
+		sb.append("SELECT DISTINCT NEW ");
 		sb.append(Category.class.getName());
-		sb.append(" AS o ");
-		sb.append(" LEFT JOIN FETCH o.parent p ");
-		sb.append(" WHERE p.id = ");
+		sb.append(" (c.id, c.text, s.id, s.text, p, c.positive, c.order) FROM "); 
+		sb.append(Category.class.getName());
+		sb.append(" AS c ");
+		sb.append(" LEFT JOIN c.person p ");
+		sb.append(" LEFT JOIN c.parent s ");
+		sb.append(" WHERE c.parent.id = ");
 		sb.append(idParent);
-		sb.append(" ORDER BY o.order, o.text ASC");
-		
+		sb.append(" ORDER BY c.order, c.text ASC");		
 		List<Category> categories = findByJpql(sb.toString());
 		return categories;
 	}
@@ -75,7 +82,7 @@ public class CategoryDAO extends CrudDAO{
 		
 		if(startDate != null) {
 			if (endDate != null) {
-				String dates = String.format("%s; %s", ClassHelper.convertDateToString(startDate.getTime()), ClassHelper.convertDateToString(endDate.getTime()));
+				String dates = String.format("%s; %s", Util.convertDateToString(startDate.getTime()), Util.convertDateToString(endDate.getTime()));
 				filters.add(getQueryParam().defineFilter(Date.class, "subCategories.transactions.transactionDate", dates));
 			} else {
 				filters.add(new Filter("subCategories.transactions.transactionDate",startDate.getTime(),Operator.EQUAL_GREATER));
@@ -84,7 +91,7 @@ public class CategoryDAO extends CrudDAO{
 		filters = new LinkedList<Filter>();
 		filters.add(rootFilter);
 		addJoinFields("subCategories,subCategories.transactions");
-		getQueryParam().addGroupByFilter("subCategories.transactions.transactionDate,id,subCategories.id");
+//		getQueryParam().addGroupByFilter("subCategories.transactions.transactionDate,id,subCategories.id");
 		
 		getQueryParam().setIncludeJoins(true);
 		Map<String, Boolean> sort = new LinkedHashMap<String, Boolean>();
@@ -104,4 +111,33 @@ public class CategoryDAO extends CrudDAO{
 	public Class<? extends BaseEntity> getEntityClass() {
 		return Category.class;
 	}
+
+
+	public Category findParentByCategory(Long id) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT s FROM "); 
+		sb.append(Category.class.getName());
+		sb.append(" AS c ");
+		sb.append(" LEFT JOIN c.parent s ");
+		sb.append(" WHERE c.id = ");
+		sb.append(id);		
+		Category category = singleResultByJpql(sb.toString());
+		return category;
+	}
+
+
+	public BigDecimal currentBalance(Category category) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		sb.append(" LEFT JOIN t.category c ");
+		sb.append(" WHERE ");
+		sb.append(" c.id = :categoryId ");
+		sb.append(" OR c.parent.id = :categoryId ");
+		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
+		query.setParameter("categoryId", category.getId());
+		return query.getSingleResult();		
+	}
+
 }

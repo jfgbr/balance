@@ -17,7 +17,7 @@ public class Filter {
 	private List<Filter> filters;
 
 	public enum Operator {
-		AND, OR, LIKE, EQUAL, NOT_EQUAL, BETWEEN, IN, NOT_IN, EQUAL_GREATER, IS_NULL, IS_NOT_NULL, IS_TRUE, IS_FALSE, JOIN, GROUPBY
+		AND, OR, LIKE, EQUAL, NOT_EQUAL, BETWEEN, IN, NOT_IN, EQUAL_GREATER, EQUAL_LESS, IS_NULL, IS_NOT_NULL, IS_TRUE, IS_FALSE, JOIN, GROUPBY
 	}
 	
 	public enum Sort {

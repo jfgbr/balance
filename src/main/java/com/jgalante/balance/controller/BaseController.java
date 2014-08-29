@@ -10,7 +10,7 @@ import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.persistence.BaseDAO;
 import com.jgalante.balance.qualifier.DAO;
 import com.jgalante.crud.entity.BaseEntity;
-import com.jgalante.crud.util.ClassHelper;
+import com.jgalante.crud.util.Util;
 
 public class BaseController<T extends BaseEntity, D extends BaseDAO> implements
 		IController<T, D>, Serializable {
@@ -28,7 +28,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDAO> implements
 	@Override
 	public Class<T> getEntityClass() {
 		if (entityClass == null) {
-			entityClass = (Class<T>) ClassHelper.getClass(this.getClass(), 0);
+			entityClass = (Class<T>) Util.getClass(this.getClass(), 0);
 		}
 		return entityClass;
 	}
@@ -46,7 +46,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDAO> implements
 	@Override
 	public Class<D> getDAOClass() {
 		if (daoClass == null) {
-			daoClass = (Class<D>) ClassHelper.getClass(this.getClass(), 1);
+			daoClass = (Class<D>) Util.getClass(this.getClass(), 1);
 		}
 		return daoClass;
 	}

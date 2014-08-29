@@ -16,6 +16,7 @@ public interface IDAO {
 	
 	public <T extends BaseEntity> T find(Object id);
 	public <T extends BaseEntity> List<T> findByJpql(String jpql);
+	public <T extends BaseEntity> T singleResultByJpql(String jpql);
 	
 	public <T extends BaseEntity> T save(T entity);
 	public <T extends BaseEntity> T remove(T entity);

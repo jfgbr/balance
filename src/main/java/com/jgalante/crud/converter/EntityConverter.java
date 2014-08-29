@@ -30,19 +30,27 @@ public class EntityConverter implements Converter {
 
 	@Override
 	public Object getAsObject(FacesContext context, UIComponent c, String value) {
-		if (value.isEmpty()) {
+		try {
+			if (value.isEmpty()) {
+				return null;
+			}
+			return getViewMap(context).get(value);
+		} catch (Exception e) {
 			return null;
 		}
-		return getViewMap(context).get(value);
 	}
 
 	@Override
 	public String getAsString(FacesContext context, UIComponent c, Object value) {
-		if (value == null) {
-			return empty;
+		try {
+			if (value == null) {
+				return empty;
+			}
+			String id = String.format("%s_%s", c.getClientId(),((BaseEntity) value).getId().toString());
+			getViewMap(context).put(id, value);
+			return id;
+		} catch (Exception e) {
+			return null;
 		}
-		String id = String.format("%s_%s", c.getClientId(),((BaseEntity) value).getId().toString());
-		getViewMap(context).put(id, value);
-		return id;
 	}
 }

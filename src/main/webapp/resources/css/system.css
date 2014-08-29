@@ -53,6 +53,14 @@ body {
 	font-weight: bold;
 }
 
+.truncate {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+	-ms-text-overflow: ellipsis;
+}
+
 .center-container {
   position: relative;
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:v="http://xmlns.jcp.org/jsf/composite/components"
+	xmlns:jg="http://com.jgalante.faces/ui"
+	template="/resources/templates/template.xhtml">
+	<ui:define name="styles">
+		<h:outputStylesheet library="css" name="crud.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="content">
+		<h:form id="frm-export">
+			<p:commandButton value="Export" ajax="false"
+				actionListener="#{exportImportView.exportCategories}"
+				onclick="PrimeFaces.monitorDownload(start, stop);"
+				icon="ui-icon-arrowthick-1-s">
+				<p:fileDownload value="#{exportImportView.file}" />
+			</p:commandButton>
+		</h:form>
+	</ui:define>
+</ui:composition>

@@ -5,23 +5,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.transaction.Transactional;
 
-import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Transaction;
-import com.jgalante.balance.persistence.CategoryDAO;
 import com.jgalante.balance.persistence.TransactionDAO;
 import com.jgalante.crud.controller.CrudController;
-import com.jgalante.crud.util.ClassHelper;
+import com.jgalante.crud.util.Util;
 
 public class TransactionController extends
 		CrudController<Transaction, TransactionDAO> {
 
 	private static final long serialVersionUID = 1L;
-	
-	@Inject
-	private CategoryDAO categoryDAO;
 	
 	@Override
 	public List<Transaction> search(int first, int pageSize,
@@ -34,14 +28,14 @@ public class TransactionController extends
 		Date tmpDate = transaction.getTransactionDate();
 		for (int i = 0; i < numMonths; i++) {
 			super.save(transaction);
-			transaction.setTransactionDate(ClassHelper.addMonthstoDate(transaction.getTransactionDate(), 1));
+			transaction.setTransactionDate(Util.addMonthstoDate(transaction.getTransactionDate(), 1));
 		}
 		transaction.setTransactionDate(tmpDate);
 	}
 	
-	public List<Category> createSubCategories(Long idParent) {
-		return categoryDAO.findCategoryByParent(idParent);
-	}
+//	public List<Category> createSubCategories(Long idParent) {
+//		return categoryDAO.findCategoryByParent(idParent);
+//	}
 	
 	public BigDecimal currentBalance() {
 		return getDAO().currentBalance();

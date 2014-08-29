@@ -2,6 +2,7 @@ package com.jgalante.balance.view;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,13 +41,13 @@ public class GroupView implements Serializable {
 	@PostConstruct
 	public void init() {
 		category = null;
-		dates = controller.months();
-		cmbDates = dates;
+		cmbDates = controller.months();
 		years = controller.years();
 		year = years.get(0);
-		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).getFirst().getValue();
-		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).getLast().getValue();
-		createListCategories(null, startDate, endDate);
+		int currentMonth = GregorianCalendar.getInstance().get(Calendar.MONTH);
+		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth-1).getValue();//getFirst().getValue();//ClassHelper.subtractMonthstoCalendar(GregorianCalendar.getInstance(),1);//
+		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth+1).getValue();//ClassHelper.addMonthstoCalendar(GregorianCalendar.getInstance(),1);//(Calendar)((LinkedList<ColumnModel>)cmbDates).getLast().getValue();
+		handleDateChange();
 	}
 
 	public void createListCategories(Long idParent, Calendar startDate, Calendar endDate) {

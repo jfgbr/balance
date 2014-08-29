@@ -12,6 +12,9 @@
 			<p:commandButton action="/pages/transaction?faces-redirect=true" value="#{constants['transaction.title']}" style="width:100px">
 				<f:setPropertyActionListener target="#{flash.crudPage}" value="#{constants['transaction.title']}"/>
 			</p:commandButton>
+			<p:commandButton action="/pages/exportImport?faces-redirect=true" value="Export/Import" style="width:100px">
+				<f:setPropertyActionListener target="#{flash.crudPage}" value="#{constants['transaction.title']}"/>
+			</p:commandButton>
 		</h:panelGrid>
 		
 	<ui:remove>

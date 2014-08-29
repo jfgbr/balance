@@ -52,6 +52,24 @@ public class Category extends BaseEntity {
 		super();
 	}
 
+	public Category(Long id, String text) {
+		super();
+		this.setId(id);
+		this.text = text;
+	}
+
+	public Category(Long id, String text, Long idParent, String textParent, Person person,
+			Boolean positive, Integer order) {
+		this.setId(id);
+		this.text = text;
+		if (idParent != null) {
+			this.parent = new Category(idParent, textParent);
+		}
+		this.person = person;
+		this.positive = positive;
+		this.order = order;
+	}
+
 	public Category(Category parent, Category subCategories,
 			Transaction transactions) {
 		super();
@@ -61,8 +79,6 @@ public class Category extends BaseEntity {
 		this.transactions = new LinkedHashSet<Transaction>();
 		this.transactions.add(transactions);
 	}
-
-
 
 	public Category(String text) {
 		super();

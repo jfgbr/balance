@@ -12,4 +12,9 @@ public class CategoryController extends BaseController<Category, CategoryDAO> {
 	public List<Category> findCategoryByParent(Long idParent) {
 		return ((CategoryDAO)getDAO()).findCategoryByParent(idParent);
 	}
+	
+
+	public Category findParentByCategory(Long id) {
+		return ((CategoryDAO)getDAO()).findParentByCategory(id);
+	}
 }

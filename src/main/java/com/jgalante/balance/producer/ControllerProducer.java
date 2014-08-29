@@ -1,5 +1,6 @@
 package com.jgalante.balance.producer;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import javax.enterprise.context.Dependent;
@@ -11,7 +12,6 @@ import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.qualifier.Controller;
 import com.jgalante.crud.entity.BaseEntity;
-import com.jgalante.crud.util.ClassHelper;
 import com.jgalante.crud.util.Util;
 
 public class ControllerProducer {
@@ -27,11 +27,15 @@ public class ControllerProducer {
 			Class<T> entityClass;
 			Class<? extends IController<T, ? extends IDAO>> controllerClass = null;
 			try {
-				Type[] typeArguments = ClassHelper.getTypeArguments(((Class<?>) ip
+				Type[] typeArguments = Util.getTypeArguments(((Class<?>) ip
 						.getBean().getBeanClass()));
 
 				entityClass = (Class<T>) typeArguments[0];
-				controllerClass = (Class<? extends IController<T, ? extends IDAO>>) typeArguments[1];
+				if (typeArguments[1] instanceof Class){
+					controllerClass = (Class<? extends IController<T, ? extends IDAO>>) typeArguments[1];
+				} else {
+					controllerClass = (Class<? extends IController<T, ? extends IDAO>>) ((ParameterizedType) typeArguments[1]).getRawType();
+				}
 			} catch (Exception e) {
 				entityClass = (Class<T>) BaseEntity.class;
 				Class<?> tmpClass = IController.class;

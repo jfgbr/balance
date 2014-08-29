@@ -15,4 +15,7 @@
 			<var>constants</var>
 		</resource-bundle>
 	</application>
+	<factory>
+		<exception-handler-factory>com.jgalante.crud.handler.MyExceptionHandlerFactory</exception-handler-factory>
+	</factory>
 </faces-config>

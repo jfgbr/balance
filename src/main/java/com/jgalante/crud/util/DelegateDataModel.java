@@ -174,7 +174,7 @@ public class DelegateDataModel<T extends BaseEntity, C extends ICrudController<T
 
 	private Field getFieldId(T object) throws UnsupportedOperationException {
 		if (fieldId == null) {
-			fieldId = ClassHelper.getField(object.getClass(), "id");
+			fieldId = Util.getField(object.getClass(), "id");
 			if (fieldId == null) {
 				throw new UnsupportedOperationException(
 						"getRowData(String rowKey) and getRowKey(T object) must be implemented when basic rowKey algorithm is not used.");

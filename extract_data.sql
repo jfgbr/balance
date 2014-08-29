@@ -23,6 +23,8 @@ FIELDS TERMINATED BY ';' ;
 SELECT
 transaction.id,
 transaction.dt_transaction,
+transaction.ds_text,
 transaction.vl_value,
+transaction.id_account,
 transaction.id_category
 FROM balance.transaction INTO OUTFILE '/tmp/balance_transaction.csv' FIELDS TERMINATED BY ';';

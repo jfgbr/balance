@@ -19,6 +19,13 @@ public class Transaction extends BaseEntity {
 	@JoinColumn(name = "id_category", nullable = false)
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Category category;
+	
+	@JoinColumn(name = "id_account", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	private Account account;
+	
+	@Column(name = "ds_text", nullable = false)
+	private String text;
 
 	@Column(name = "dt_transaction")
 	private Date transactionDate;
@@ -76,6 +83,22 @@ public class Transaction extends BaseEntity {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
 	}
 
 }

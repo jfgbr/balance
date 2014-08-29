@@ -36,6 +36,19 @@ public class BaseDAO implements IDAO, Serializable {
 		return results;
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends BaseEntity> T singleResultByJpql(String jpql) {
+		T result = null;
+		Query query = getEntityManager().createQuery(jpql);
+		try {
+		result = (T)query.getSingleResult();
+		} catch (Exception e) {
+			result = null;
+		}
+		return result;
+	}
+	
 	@Transactional
 	public <T extends BaseEntity> T save(T entity) {
 		return getEntityManager().merge(entity);

@@ -11,7 +11,7 @@ import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.qualifier.Controller;
 import com.jgalante.crud.entity.BaseEntity;
-import com.jgalante.crud.util.ClassHelper;
+import com.jgalante.crud.util.Util;
 
 public class BaseView<T extends BaseEntity, C extends IController<T, ? extends IDAO>>
 		implements Serializable {
@@ -39,7 +39,7 @@ public class BaseView<T extends BaseEntity, C extends IController<T, ? extends I
 	@SuppressWarnings("unchecked")
 	public Class<T> getEntityClass() {
 		if (entityClass == null) {
-			entityClass = (Class<T>)ClassHelper.getClass(this.getClass(), 0);
+			entityClass = (Class<T>)Util.getClass(this.getClass(), 0);
 		}
 		return entityClass;
 	}
@@ -70,7 +70,7 @@ public class BaseView<T extends BaseEntity, C extends IController<T, ? extends I
 	protected String getMessage(String key){
 		try{
 			return ResourceBundle.getBundle("MessageResources")
-					.getString(ClassHelper.getClass(this.getClass(), 0).getSimpleName().toLowerCase() + "." + key);
+					.getString(Util.getClass(this.getClass(), 0).getSimpleName().toLowerCase() + "." + key);
 		}catch(MissingResourceException e){
 			return ResourceBundle.getBundle("MessageResources")
 					.getString("default." + key);

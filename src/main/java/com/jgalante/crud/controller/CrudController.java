@@ -1,5 +1,6 @@
 package com.jgalante.crud.controller;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +14,14 @@ public class CrudController<T extends BaseEntity, D extends CrudDAO> extends
 		BaseController<T, D> implements ICrudController<T, D> {
 
 	private static final long serialVersionUID = 1L;
+	
+	protected List<Filter> filters;
 
 	@Override
 	public List<T> search(int first, int pageSize, Map<String, Boolean> sort,
 			Map<String, Object> filters) {
+		getDAO().cleanFilter();
+		getDAO().addFilters(this.filters);		
 		return ((CrudDAO) getDAO()).search(first, pageSize, sort, filters);
 	}
 
@@ -26,12 +31,17 @@ public class CrudController<T extends BaseEntity, D extends CrudDAO> extends
 	}
 
 	public void addFilter(Filter filter) {
-		getDAO().cleanFilter();
-		getDAO().addFilter(filter);
+		if (filters == null) {
+			filters = new LinkedList<Filter>();
+		}
+		filters.add(filter);
+//		getDAO().cleanFilter();
+//		getDAO().addFilter(filter);
 	}
 	
 	public void cleanFilter() {
-		getDAO().cleanFilter();
+//		getDAO().cleanFilter();
+		filters.clear();
 	}
 	
 	@SuppressWarnings("unchecked")

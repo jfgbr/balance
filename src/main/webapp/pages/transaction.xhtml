@@ -21,11 +21,19 @@
 						<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind" hideEffect="explode" showEvent="mouseover" hideEvent="mousedown"
 		                    dismissable="false" showCloseIcon="true" >
 							<h:panelGrid columns="2">
+								<h:outputText value="#{constants['account.title']}" />
+								<p:selectOneMenu value="#{transactionView.account}"  converter="entityConverter">
+									<p:ajax event="change" process="@this" update="cbx-sub-category,:crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleCategoryChange}"/>
+									<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+									<f:selectItems value="#{transactionView.accounts}" var="a"
+										itemLabel="#{a.text}" itemValue="#{a}" />
+								</p:selectOneMenu>
+								
 								<h:outputText value="#{constants['category.title']}" />
 								<p:selectOneMenu value="#{transactionView.category}"  converter="entityConverter">
 									<p:ajax event="change" process="@this" update="cbx-sub-category,:crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleCategoryChange}"/>
 									<f:selectItem itemLabel="Selecione" itemValue="${null}" />
-									<f:selectItems value="#{categoryView.categories}" var="c"
+									<f:selectItems value="#{transactionView.categories}" var="c"
 										itemLabel="#{c.text}" itemValue="#{c}" />
 								</p:selectOneMenu>
 								
@@ -45,12 +53,19 @@
 							<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
 						</h:outputText>
 					</h:panelGroup>
+					<h:panelGroup rendered="#{not empty transactionView.account}">
+						<h:outputText value="#{transactionView.account.text} Balance: " style="font-weight:bold;" />
+						<h:outputText value="#{transactionView.accountCurrentBalance}" styleClass="trans-value-positive-#{transactionView.accountCurrentBalance ge 0}">
+							<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
+						</h:outputText>
+					</h:panelGroup>
 					<p:dataTable value="#{transactionView.dataModel}" var="item"
-							style="width:475px" 
+							style="width:937px" 
 							paginator="true" rows="15" lazy="true"
 							paginatorPosition="top"
 							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-							rowsPerPageTemplate="15,30,50" >
+							rowsPerPageTemplate="15,30,50" 
+							widgetVar="datamodel">
 					
 							<p:column width="60" styleClass="trans-col-02">
 								<f:facet name="header">
@@ -61,11 +76,28 @@
 								</h:outputText>
 							</p:column>
 							
-							<p:column sortBy="#{item.category}"  styleClass="trans-col-01">
+							<p:column sortBy="#{item.account.text}"  styleClass="trans-col-01">
+								<f:facet name="header">
+									<h:outputText value="#{constants['account.title']}" escape="false" />
+								</f:facet>
+								<h:outputText value="#{item.account.text}" />
+							</p:column>
+							
+							<p:column sortBy="#{item.category.parent}"  styleClass="trans-col-01">
 								<f:facet name="header">
 									<h:outputText value="#{constants['category.title']}" escape="false" />
 								</f:facet>
+								<h:outputText value="#{item.category.parent.text}" />
+							</p:column>
+							
+							<p:column sortBy="#{item.category}"  styleClass="trans-col-01 truncate">
+								<f:facet name="header">
+									<h:outputText value="#{constants['category.sub.title']}" escape="false" />
+								</f:facet>
 								<h:outputText value="#{item.category.text}" />
+								<h:outputText id="col-category-text" value=" (#{item.text})" rendered="#{not empty item.text}"/>
+								<p:tooltip id="toolTipFocus" for="col-category-text"
+								value="#{item.category.text} #{not empty item.text?item.text:''}" />
 							</p:column>
 							
 							<p:column sortBy="#{item.value}"  styleClass="trans-col-02">
@@ -77,7 +109,11 @@
 								</h:outputText>
 							</p:column>
 				
-							<p:column styleClass="btnColunaAcoes">
+							<p:column styleClass="btnColunaAcoes" width="50">
+								<p:commandButton action="#{transactionView.copy(item)}" 
+									update=":crud-transaction:frm-transaction:modal"
+									process="@this"
+									icon="ui-icon ui-icon-copy" style="font-size:6pt;" oncomplete="PF('datamodel').filter()" />
 								<p:commandButton action="#{transactionView.remove}" update=":crud-transaction:frm-transaction:data-table"
 									icon="ui-icon ui-icon-closethick" style="font-size:6pt;" />
 							</p:column>
@@ -87,12 +123,19 @@
 
 			<f:facet name="dialogFields">
 				<h:panelGrid columns="2" width="300px">
+				
+					<h:outputText value="#{constants['account.title']}" />
+					<p:selectOneMenu value="#{transactionView.entity.account}"  converter="entityConverter">
+						<p:ajax event="change" process="@this" />
+						<f:selectItems value="#{accountView.accounts}" var="a"
+							itemLabel="#{a.text}" itemValue="#{a}" />
+					</p:selectOneMenu>
 					
 					<h:outputText value="#{constants['category.title']}" />
 					<p:selectOneMenu value="#{transactionView.category}"  converter="entityConverter">
 						<p:ajax event="change" process="@this" update="cbx-sub-category" listener="#{transactionView.handleCategoryChange}"/>
 						<f:selectItem itemLabel="Selecione" itemValue="${null}" />
-						<f:selectItems value="#{categoryView.categories}" var="c"
+						<f:selectItems value="#{transactionView.categories}" var="c"
 							itemLabel="#{c.text}" itemValue="#{c}" />
 					</p:selectOneMenu>
 					
@@ -120,9 +163,15 @@
 				        	style="width: 100px" displayTemplate="{value}" />
 				    </h:panelGrid>
 					
-					
 					<h:outputText value="#{constants['transaction.date']}" />
 					<p:calendar value="#{transactionView.entity.transactionDate}" />
+					
+					<h:outputText value="#{constants['transaction.description']}" />
+					<p:inputTextarea value="#{transactionView.entity.text}" counter="counter" 
+						maxlength="1000" counterTemplate="{0} characters remaining." autoResize="false" />
+					<h:panelGroup />
+					<h:outputText id="counter" />
+					
 				</h:panelGrid>
 			</f:facet>
 

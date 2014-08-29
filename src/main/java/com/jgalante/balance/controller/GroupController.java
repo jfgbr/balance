@@ -110,19 +110,21 @@ public class GroupController implements Serializable {
 				groups.add(node);
 				root.addSubCategories(node);
 				for (Transaction item : transactions) {
-					node.addValue(item.getTransactionDate(), item.getValue(), monthStart, monthEnd);
-					root.addValue(item.getTransactionDate(), item.getValue(), monthStart, monthEnd);
+					node.addValue(item.getTransactionDate(), item.getValue(), monthStart, monthEnd, category.getPositive());
+					root.addValue(item.getTransactionDate(), item.getValue(), monthStart, monthEnd, category.getPositive());
 				}
+				node.setTotalValue(categoryDAO.currentBalance(category));
 			} else {
 				newRoot = new Group(category, null);
 				groups.add(newRoot);
-			
+				newRoot.setTotalValue(categoryDAO.currentBalance(category));
 				if (category.getLevel().equals(1)) {
 					createGroups(newRoot, new LinkedList<Category>(category.getSubCategories()), groups, monthStart, monthEnd);
 				}
 			}
 			total.addValue(newRoot.getTransaction().getValue());
 		}
+		
 		return total.getValue();
 	}
 	
