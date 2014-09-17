@@ -92,7 +92,7 @@ public class Transaction extends BaseEntity {
 	public void setAccount(Account account) {
 		this.account = account;
 	}
-
+	
 	public String getText() {
 		return text;
 	}

@@ -10,11 +10,13 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.text.DateFormat;
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -453,7 +455,7 @@ public class Util {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected static <T extends BaseEntity> JsonObjectBuilder createJsonObjectBuilde(
 			Class<T> entityClass, T entity) throws InstantiationException,
 			IllegalAccessException {
@@ -467,8 +469,27 @@ public class Util {
 		for (Field field : fields) {
 			try {
 				if (isAssignableFrom(BaseEntity.class, field.getType())) {
-					jsonBuilder.add(field.getName(),
-							createJsonObjectBuilde((Class<T>)field.getType(), (T) runGetter(field, entity)));
+					BaseEntity baseEntity = (BaseEntity)runGetter(field, entity);
+					if (baseEntity == null) {
+						jsonBuilder.addNull(field.getName());
+					} else {
+						jsonBuilder.add(field.getName(),
+							createJsonObjectBuilde((Class<BaseEntity>)field.getType(), (BaseEntity) runGetter(field, entity)));
+					}
+				} else if (isAssignableFrom(List.class, field.getType()) || isAssignableFrom(Set.class, field.getType())){
+					Class paramClass = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+					if (isAssignableFrom(BaseEntity.class, paramClass)) {
+						Collection<BaseEntity> list = (Collection<BaseEntity>) runGetter(field, entity);
+						if (list == null || list.size() == 0) {
+							jsonBuilder.addNull(field.getName());
+						} else {
+							for (BaseEntity object : list) {
+								jsonBuilder.add(field.getName(),
+										createJsonObjectBuilde(paramClass, object));
+							}
+						}
+					}
+					
 				} else {
 					Object value = runGetter(field, entity);
 					if (value == null) {
@@ -511,7 +532,7 @@ public class Util {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected static <T extends BaseEntity> T readJsonObject(
+	public static <T extends BaseEntity> T readJsonObject(
 			Class<T> entityClass, JsonObject jsonObject) {
 		try {
 			if (jsonObject.size() > 0) {
@@ -589,6 +610,12 @@ public class Util {
 		return df.format(date);
 	}
 
+	public static Calendar convertDateToCalendar(Date date) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		return calendar;
+	}
+	
 	public static Calendar addDaystoCalendar(Calendar calendar, Integer numDays) {
 		Calendar newCalendar = (Calendar) calendar.clone();
 		newCalendar.add(Calendar.DAY_OF_MONTH, numDays);
@@ -629,5 +656,93 @@ public class Util {
 			Integer numMonths) {
 		calendar.add(Calendar.MONTH, -numMonths);
 		return calendar;
+	}
+
+	public static Calendar beginOfMonth(Calendar calendar) {
+		Calendar minDate = (Calendar)calendar.clone();
+		minDate.set(Calendar.HOUR_OF_DAY, 0);
+		minDate.set(Calendar.MINUTE, 0);
+		minDate.set(Calendar.SECOND, 0);
+		minDate.set(Calendar.DAY_OF_MONTH, minDate.getActualMinimum(Calendar.DAY_OF_MONTH));
+		return minDate;
+	}
+	
+	public static Calendar endOfMonth(Calendar calendar) {
+		Calendar maxDate = (Calendar)calendar.clone();
+		maxDate.set(Calendar.HOUR_OF_DAY, 23);
+		maxDate.set(Calendar.MINUTE, 59);
+		maxDate.set(Calendar.SECOND, 59);
+		maxDate.set(Calendar.DAY_OF_MONTH, maxDate.getActualMaximum(Calendar.DAY_OF_MONTH));		
+		return maxDate;
+	}
+
+	public static LinkedList<ColumnModel> months() {
+		return months(0,11);
+	}
+	
+	public static LinkedList<ColumnModel> months(Calendar startDate, Calendar endDate) {
+		return months(getMonth(startDate), getMonth(endDate));
+	}
+
+	public static LinkedList<ColumnModel> months(Date startDate, Date endDate) {
+    	return months(getMonth(startDate), getMonth(endDate));
+	}
+
+	public static LinkedList<ColumnModel> months(int monthStart, int monthEnd) {
+		String[] months = new DateFormatSymbols().getMonths();
+		LinkedList<ColumnModel> dates = new LinkedList<ColumnModel>();
+		
+    	boolean visible;
+    	if (monthEnd == 0) monthEnd = 11;
+    	
+	    for (int i = monthStart; i < monthEnd+1; i++) {
+	    	visible = false;
+	    	if (monthStart <= i && monthEnd >= i) {
+	    		visible = true;
+	    	}
+	    	Calendar date = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), i, 1, 0, 0, 0);
+	    	dates.add(new ColumnModel(months[i], date, visible));
+	    }
+	    return dates;
+	}
+	
+	public static LinkedList<Calendar> calendarMonths(int monthStart, int monthEnd) {
+		LinkedList<Calendar> dates = new LinkedList<Calendar>();
+		
+    	if (monthEnd == 0) monthEnd = 11;
+    	
+	    for (int i = monthStart; i < monthEnd+1; i++) {
+	    	Calendar date = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), i, 1, 0, 0, 0);
+	    	dates.add(date);
+	    }
+	    return dates;
+	}
+
+	public static int getMonth(Date date) {
+		if (date == null) {
+			return 0;
+		}
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		return getMonth(calendar);
+	}
+
+	public static int getMonth(Calendar calendar) {
+		if (calendar == null) {
+			return 0;
+		}
+		int month;
+		month = calendar.get(Calendar.MONTH);
+		return month;
+	}
+
+
+	public static LinkedList<Integer> years() {
+		LinkedList<Integer> years = new LinkedList<Integer>();
+		Integer current = Calendar.getInstance().get(Calendar.YEAR); 
+		for (int i = 0; i < 10; i++,--current) {
+			years.add(current);
+		}
+		return years;
 	}
 }

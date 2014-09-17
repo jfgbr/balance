@@ -73,6 +73,14 @@
 								<p:commandButton value="#{constants['default.close']}" action="#{cc.attrs.view.close}"
 									ajax="true" process="@this"
 									update=":#{cc.clientId}:#{cc.attrs.formId}" />
+								<p:commandButton value="#{constants['default.save']}/#{constants['default.close']}"
+									ajax="true"
+									action="#{cc.attrs.view.save}"
+									process=":#{cc.clientId}:#{cc.attrs.formId}:edit"
+									update=":#{cc.clientId}:#{cc.attrs.formId}:modal,:#{cc.clientId}:#{cc.attrs.formId}:data-table,#{cc.attrs.update}"
+									onsuccess="rc();" >
+								</p:commandButton>
+								<p:remoteCommand name="rc" update=":#{cc.clientId}:#{cc.attrs.formId}" action="#{cc.attrs.view.close}" /> 
 							</h:panelGroup>
 						</f:facet>
 					</v:modal>

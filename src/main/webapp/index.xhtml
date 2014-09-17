@@ -12,7 +12,7 @@
 		<h:outputStylesheet library="css" name="crud.css"></h:outputStylesheet>
 	</ui:define>
 	<ui:define name="content">
-		<p:panel id="panel" header="Balance"
+		<p:panel id="pnl-group" header="Balance"
 				style="margin-bottom:10px;width:99%;margin-right:10px;" toggleable="false">
 			<h:form id="frm-group">
 				<p:commandButton id="btn-filter" icon="ui-icon-calculator" value="Filter"/>
@@ -27,6 +27,14 @@
 								itemLabel="#{y}" itemValue="#{y}" />
 						</p:selectOneMenu>
 						
+						<h:outputText value="#{constants['account.title']}" />
+						<p:selectOneMenu valueChangeListener="#{groupView.handleAccountChange}" >
+							<p:ajax event="change" process="@this" update="tbl" />
+							<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+							<f:selectItems value="#{transactionView.accounts}" var="a"
+								itemLabel="#{a.text}" itemValue="#{a.id}" />
+						</p:selectOneMenu>
+						
 						<h:outputText value="#{constants['category.title']}" />
 						<p:selectOneMenu
 							valueChangeListener="#{groupView.handleCategoryChange}">
@@ -36,7 +44,7 @@
 								itemLabel="#{c}" itemValue="#{c.id}" />
 						</p:selectOneMenu>
 		
-						<h:outputText value="Start #{constants['transaction.date']}" />
+						<h:outputText value="Start #{constants['default.date']}" />
 						<p:selectOneMenu value="#{groupView.startDate}"
 							converter="baseConverter">
 							<p:ajax event="change" process="@this" update="tbl"
@@ -45,7 +53,7 @@
 								itemLabel="#{c.header}" itemValue="#{c.value}" />
 						</p:selectOneMenu>
 		
-						<h:outputText value="End #{constants['transaction.date']}" />
+						<h:outputText value="End #{constants['default.date']}" />
 						<p:selectOneMenu value="#{groupView.endDate}"
 							converter="baseConverter">
 							<p:ajax event="change" process="@this" update="tbl"
@@ -86,10 +94,18 @@
 							</p:commandLink>
 						</h:panelGroup>
 					</p:column>
+					
+					<p:columns value="#{groupView.dates}" var="column"
+						columnIndexVar="colIndex" styleClass="trans-col-02"
+						rendered="#{group.onlyCategory}">
+						<h:outputText value="#{group.values[colIndex]}" styleClass="trans-value-positive-#{group.values[colIndex] ge 0}">
+							<f:convertNumber type="currency" currencySymbol="" />
+						</h:outputText>
+					</p:columns>	
 	
 					<p:columns value="#{groupView.dates}" var="column"
 						columnIndexVar="colIndex" styleClass="trans-col-02"
-						rendered="#{group.onlyCategory or group.showing}">
+						rendered="#{!group.onlyCategory and group.showing}">
 						<h:outputText value="#{group.values[colIndex]}" styleClass="trans-value-positive-#{group.category.positive}">
 							<f:convertNumber type="currency" currencySymbol="" />
 						</h:outputText>

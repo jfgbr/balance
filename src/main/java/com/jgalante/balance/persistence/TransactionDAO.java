@@ -6,17 +6,33 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaQuery;
 
+import com.jgalante.balance.entity.Account;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Transaction;
 import com.jgalante.crud.entity.BaseEntity;
 import com.jgalante.crud.persistence.CrudDAO;
+import com.jgalante.crud.util.Util;
 
 public class TransactionDAO extends CrudDAO {
 
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public <T extends BaseEntity> List<T> searchAll(Map<String, Boolean> sort) {
+		getQueryParam().reset();
+		addJoinFields("account");
+		addJoinFields("category");
+		addJoinFields("category.parent");
+		Map<String, Boolean> tmpSort = new LinkedHashMap<String, Boolean>();
+		if (sort != null) {
+			tmpSort.putAll(sort);
+		}
+		tmpSort.put("id", false);
+		return super.searchAll(tmpSort);
+	}
 	
 	@Override
 	public <T extends BaseEntity> List<T> search(int first, int pageSize,
@@ -24,35 +40,16 @@ public class TransactionDAO extends CrudDAO {
 		addJoinFields("account");
 		addJoinFields("category");
 		addJoinFields("category.parent");
-		Map<String, Boolean> tmpSort = new LinkedHashMap<String, Boolean>();
-		tmpSort.put("transactionDate", true);
-		if (sort != null) {
-			tmpSort.putAll(sort);			
-		}
-		tmpSort.put("id", true);
-		return super.search(first, pageSize, tmpSort, filters);
+		return super.search(first, pageSize, sort, filters);
 	}
 	
-	public List<Category> findCategories() {
-		CriteriaQuery<Category> cq = getEntityManager().getCriteriaBuilder().createQuery(Category.class);
-		cq.select(cq.from(Category.class));
-		return getEntityManager().createQuery(cq).getResultList();
-	}
+//	public List<Category> findCategories() {
+//		CriteriaQuery<Category> cq = getEntityManager().getCriteriaBuilder().createQuery(Category.class);
+//		cq.select(cq.from(Category.class));
+//		return getEntityManager().createQuery(cq).getResultList();
+//	}
 
 	public BigDecimal currentBalance() {
-//		StringBuffer sb = new StringBuffer();
-//		sb.append("SELECT SUM(t.value) FROM ");
-//		sb.append(Transaction.class.getName());
-//		sb.append(" AS t ");
-//		sb.append(" LEFT JOIN t.category c ");
-//		sb.append(" WHERE c.positive is :positive ");
-//		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
-//		query.setParameter("positive", true);
-//		BigDecimal income = query.getSingleResult();
-//		query.setParameter("positive", false);
-//		BigDecimal outcome = query.getSingleResult();
-//		return income.subtract(outcome);
-		
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
 		sb.append(Transaction.class.getName());
@@ -60,73 +57,97 @@ public class TransactionDAO extends CrudDAO {
 		sb.append(" LEFT JOIN t.category c ");
 		sb.append(" WHERE ");
 		sb.append(" t.transactionDate <= :tDate");
+		sb.append(" AND t.account.type.id <> 3");
 //		sb.append(" c.id = :categoryId ");
 //		sb.append(" OR c.parent.id = :categoryId ");
 		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
-		query.setParameter("tDate", Calendar.getInstance().getTime());
+		query.setParameter("tDate", Calendar.getInstance(), TemporalType.DATE);
 		return query.getSingleResult();
 	}
 	
-	/*@Transactional
-	public List<Category> findCategoriesByParent(Long idParent) {
+	public BigDecimal currentBalance(Account account, Category category) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT object(o) FROM ");
-		sb.append(Category.class.getName());
-		sb.append(" AS o ");
-		sb.append(" LEFT JOIN FETCH o.parent p ");
-		sb.append(" LEFT JOIN FETCH o.subCategories s ");
-		sb.append(" LEFT JOIN FETCH o.transactions t ");
-		sb.append(" LEFT JOIN FETCH s.transactions t1 ");
-//		sb.append(" LEFT JOIN FETCH t.transactionType tp ");
-		sb.append(" LEFT JOIN FETCH o.person pe ");
-		sb.append(" LEFT JOIN FETCH s.person pe1 ");
-		sb.append(" WHERE p = ");
-		sb.append(idParent);
-		sb.append(" ORDER BY o.order, o.id, s.id, pe.name, pe1.name ASC");
-		
-		List<Category> categories = getDAO().findByJpql(sb.toString());
-		return categories;
-	}*/
-	
-	/*@Transactional
-	public List<Category> findCategoriesByParent(Long idParent) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT DISTINCT object(o) FROM ");
-		sb.append(Category.class.getName());
-		sb.append(" AS o ");
-		sb.append(" LEFT JOIN FETCH o.parent p ");
-		sb.append(" LEFT JOIN FETCH o.subCategories s ");
-		sb.append(" LEFT JOIN FETCH o.transactions t ");
-		sb.append(" LEFT JOIN FETCH s.transactions t1 ");
-//		sb.append(" LEFT JOIN FETCH t.transactionType tp ");
-		sb.append(" LEFT JOIN FETCH t.person pe ");
-		sb.append(" LEFT JOIN FETCH t1.person pe1 ");
-		sb.append(" WHERE p = ");
-		sb.append(idParent);
-		sb.append(" ORDER BY o.order, o.id, s.id, pe.name, pe1.name ASC");
-		
-		List<Category> categories = getDAO().findByJpql(sb.toString());
-		return categories;
-	}*/
-	
-	/*	
-//	@Transactional
-	public List<Group2> findGroupsByParent(Long idParent) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT object(o) FROM ");
-		sb.append(Category.class.getName());
-		sb.append(" AS o ");
-		sb.append(" LEFT JOIN FETCH o.parent p ");
-//		sb.append(" JOIN FETCH o.subCategories s ");
-//		sb.append(" JOIN FETCH s.transactions t ");
-		sb.append(" WHERE p = ");
-		sb.append(idParent);
-		sb.append(" ORDER BY o.text, p.text ASC");
-		
-		List<Category> categories = findCategoriesByParent(idParent);//getDAO().findByJpql(sb.toString());
-		List<Group2> groups = new LinkedList<Group2>();
-		createGroups(null,categories, groups);
-		return groups;
+		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		sb.append(" LEFT JOIN t.category c ");
+		sb.append(" LEFT JOIN t.account a ");
+		sb.append(" WHERE ");
+		sb.append(" t.transactionDate <= :tDate ");
+		if (account != null || category != null) {
+			sb.append(" AND ");
+			if (account != null) {
+				sb.append(" a.id = ");
+				sb.append(account.getId());
+			}
+			if (category != null) {
+				if (account != null) {
+					sb.append(" AND ");
+				}
+				if (category.getParent() == null)
+					sb.append(" c.parent.id = ");
+				else
+					sb.append(" c.id = ");
+				
+				sb.append(category.getId());
+			}
+		}
+		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
+		query.setParameter("tDate", Calendar.getInstance(), TemporalType.DATE);
+		return query.getSingleResult();
 	}
-*/
+
+	public BigDecimal currentBalance(Account account, Calendar startDate, Calendar endDate) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		sb.append(" LEFT JOIN t.account a ");
+		sb.append(" LEFT JOIN t.category c ");
+		sb.append(" WHERE ");
+		sb.append(" (t.transactionDate <= :dtEnd) ");
+		if (account != null) {
+			sb.append(" AND ");
+			if (account != null) {
+				sb.append(" a.id = ");
+				sb.append(account.getId());
+			}
+		}
+		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
+//		query.setParameter("dtStart", Util.beginOfMonth(startDate), TemporalType.DATE);
+		Calendar date = Util.endOfMonth(endDate);
+		Calendar today = Calendar.getInstance();
+		query.setParameter("dtEnd", (date.compareTo(today) > 0 ? today : date), TemporalType.DATE);
+		return query.getSingleResult();
+	}
+	
+	public BigDecimal currentBalanceCreditCard(Account account, Calendar startDate, Calendar endDate) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		sb.append(" LEFT JOIN t.account a ");
+		sb.append(" LEFT JOIN t.category c ");
+		sb.append(" WHERE ");
+		sb.append(" (t.transactionDate >= :dtStart) ");
+		sb.append(" AND (t.transactionDate <= :dtEnd) ");
+		sb.append(" AND a.id = :accountId");
+		sb.append(" AND c.positive is FALSE ");
+		
+		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
+		query.setParameter("accountId", account.getId());
+		query.setParameter("dtStart", Util.beginOfMonth(startDate), TemporalType.DATE);
+		Calendar date = Util.endOfMonth(endDate);
+		Calendar today = date;// Calendar.getInstance();
+		query.setParameter("dtEnd", (date.compareTo(today) > 0 ? today : date), TemporalType.DATE);
+		return query.getSingleResult();
+	}
+
+	@Override
+	public Class<? extends BaseEntity> getEntityClass() {
+		if (super.getEntityClass() == null) {
+			super.setEntityClass(Transaction.class);
+		}
+		return super.getEntityClass();
+	}
 }

@@ -22,6 +22,19 @@ import com.jgalante.crud.util.Filter.Operator;
 public class CategoryDAO extends CrudDAO{
 
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+	public <T extends BaseEntity> List<T> searchAll(Map<String, Boolean> sort) {
+		getQueryParam().reset();
+		addJoinFields("person");
+		addJoinFields("parent");
+		Map<String, Boolean> tmpSort = new LinkedHashMap<String, Boolean>();
+		if (sort != null) {
+			tmpSort.putAll(sort);
+		}
+		tmpSort.put("id", false);
+		return super.searchAll(tmpSort);
+	}
 
 	
 	@Transactional
@@ -45,7 +58,7 @@ public class CategoryDAO extends CrudDAO{
 	
 
 	@Transactional
-	public List<Category> findGroupsByParent(Long idParent, Calendar startDate, Calendar endDate) {
+	public List<Category> findGroupsByParent(Long idParent, Long idAccount, Calendar startDate, Calendar endDate) {
 		
 //		StringBuffer sb = new StringBuffer();
 //		sb.append("SELECT DISTINCT object(c) FROM ");
@@ -78,6 +91,10 @@ public class CategoryDAO extends CrudDAO{
 		filters.add(new Filter("parent.id", Operator.IS_NULL));
 		if (idParent != null) {
 			filters.add(new Filter("subCategories.parent.id", idParent));
+		}
+		
+		if (idAccount != null) {
+			filters.add(new Filter("subCategories.transactions.account.id", idAccount));
 		}
 		
 		if(startDate != null) {
@@ -138,6 +155,39 @@ public class CategoryDAO extends CrudDAO{
 		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
 		query.setParameter("categoryId", category.getId());
 		return query.getSingleResult();		
+	}
+
+
+	public List<Category> findTransferCategories() {
+		getQueryParam().reset();
+		List<Filter> filters = new LinkedList<Filter>();
+		Filter rootFilter = new Filter(Operator.AND, filters);
+		filters.add(new Filter("parent.id", Operator.IS_NULL));
+		filters.add(new Filter("transfer", Operator.IS_TRUE));
+		filters = new LinkedList<Filter>();
+		filters.add(rootFilter);
+		Map<String, Boolean> sort = new LinkedHashMap<String, Boolean>();
+		sort.put("order", false);
+		sort.put("text", false);
+		TypedQuery<Category> query = createQuery(sort, filters);
+		
+		List<Category> categories = query.getResultList();
+		return categories;
+	}
+
+
+	public Category findTransferFromParent(Long id, Boolean positive) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT c FROM "); 
+		sb.append(Category.class.getName());
+		sb.append(" AS c ");
+		sb.append(" WHERE c.parent.id = ");
+		sb.append(id);		
+		sb.append(" AND c.positive = ");
+		sb.append(positive.toString());	
+		sb.append(" AND c.transfer is TRUE ");
+		Category category = singleResultByJpql(sb.toString());
+		return category;
 	}
 
 }

@@ -11,13 +11,38 @@
 		<h:outputStylesheet library="css" name="crud.css"></h:outputStylesheet>
 	</ui:define>
 	<ui:define name="content">
-		<h:form id="frm-export">
-			<p:commandButton value="Export" ajax="false"
-				actionListener="#{exportImportView.exportCategories}"
-				onclick="PrimeFaces.monitorDownload(start, stop);"
-				icon="ui-icon-arrowthick-1-s">
-				<p:fileDownload value="#{exportImportView.file}" />
-			</p:commandButton>
-		</h:form>
+		<p:panel id="pnl-export" header="Export"
+				style="margin-bottom:10px;width:100%;" toggleable="false">
+			<h:form id="frm-export">
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+			        <p:outputLabel for="tables" value="Tables:" />
+			        <p:selectOneRadio id="tables" value="#{exportImportView.exportTable}"  layout="grid" columns="3">
+			            <f:selectItems value="#{exportImportView.tables}" var="t" itemLabel="#{t}" itemValue="#{t}"/>
+			        </p:selectOneRadio>
+			    </h:panelGrid>
+				<p:commandButton value="Export" ajax="false"
+					actionListener="#{exportImportView.exportData}"
+					onclick="PrimeFaces.monitorDownload(start, stop);"
+					icon="ui-icon-arrowthick-1-s">
+					<p:fileDownload value="#{exportImportView.exportFile}" />
+				</p:commandButton>
+			</h:form>
+		</p:panel>
+		<p:panel id="pnl-import" header="Import"
+				style="margin-bottom:10px;width:100%;" toggleable="false">
+			<h:form id="frm-import" enctype="multipart/form-data">
+				<h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+			        <p:outputLabel for="tables" value="Tables:" />
+			        <p:selectOneRadio id="tables" value="#{exportImportView.importTable}"  layout="grid" columns="3">
+			            <f:selectItems value="#{exportImportView.tables}" var="t" itemLabel="#{t}" itemValue="#{t}"/>
+			        </p:selectOneRadio>
+			    </h:panelGrid>
+				<p:fileUpload value="#{exportImportView.importFile}" mode="simple"/>
+				<p:commandButton value="Import" ajax="false"
+					actionListener="#{exportImportView.importData}"
+					icon="ui-icon-arrowthick-1-n">
+				</p:commandButton>
+			</h:form>
+		</p:panel>
 	</ui:define>
 </ui:composition>

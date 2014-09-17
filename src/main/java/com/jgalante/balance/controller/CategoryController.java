@@ -17,4 +17,19 @@ public class CategoryController extends BaseController<Category, CategoryDAO> {
 	public Category findParentByCategory(Long id) {
 		return ((CategoryDAO)getDAO()).findParentByCategory(id);
 	}
+
+
+	public List<Category> findTransferCategories() {
+		return ((CategoryDAO)getDAO()).findTransferCategories();
+	}
+
+
+	public Category findTransferFromParent(Long id, Boolean positive) {
+		return ((CategoryDAO)getDAO()).findTransferFromParent(id, positive);
+	}
+	
+	@Override
+	public Class<Category> getEntityClass() {
+		return Category.class;
+	}
 }

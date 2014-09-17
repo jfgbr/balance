@@ -1,15 +1,20 @@
 package com.jgalante.balance.controller;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import com.jgalante.balance.entity.Account;
+import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Transaction;
 import com.jgalante.balance.persistence.TransactionDAO;
 import com.jgalante.crud.controller.CrudController;
+import com.jgalante.crud.util.Filter;
 import com.jgalante.crud.util.Util;
 
 public class TransactionController extends
@@ -17,10 +22,20 @@ public class TransactionController extends
 
 	private static final long serialVersionUID = 1L;
 	
+	private Filter searchFilter;
+	
 	@Override
 	public List<Transaction> search(int first, int pageSize,
 			Map<String, Boolean> sort, Map<String, Object> filters) {
-		return super.search(first, pageSize, sort, filters);
+		cleanFilter();
+		addFilter(searchFilter);
+		Map<String, Boolean> tmpSort = new LinkedHashMap<String, Boolean>();
+		tmpSort.put("transactionDate", true);
+		if (sort != null) {
+			tmpSort.putAll(sort);			
+		}
+		tmpSort.put("id", true);
+		return super.search(first, pageSize, tmpSort, filters);
 	}
 
 	@Transactional
@@ -41,4 +56,29 @@ public class TransactionController extends
 		return getDAO().currentBalance();
 	}
 	
+	public BigDecimal currentBalance(Account account, Category category) {
+		return getDAO().currentBalance(account, category);
+	}
+
+	public BigDecimal currentBalance(Account account, Calendar startDate, Calendar endDate) {
+		return getDAO().currentBalance(account, startDate, endDate);
+	}
+
+	public BigDecimal currentBalanceCreditCard(Account account, Calendar startDate, Calendar endDate) {
+		return getDAO().currentBalanceCreditCard(account, startDate, endDate);
+	}
+	
+	public Filter getSearchFilter() {
+		return searchFilter;
+	}
+
+	public void setSearchFilter(Filter searchFilter) {
+		this.searchFilter = searchFilter;
+	}
+	
+	@Override
+	public Class<Transaction> getEntityClass() {
+		return Transaction.class;
+	}
+
 }

@@ -7,6 +7,7 @@
 	<cc:interface>
 		<cc:attribute name="id" type="java.lang.String" required="true" />
 		<cc:attribute name="visible" type="java.lang.Boolean" default="true" />
+		<cc:attribute name="rendered" type="java.lang.Boolean" default="true" />
 		<cc:attribute name="header" type="java.lang.String" default="Title" />
 		<cc:attribute name="widgetVar" type="java.lang.String"
 			required="false" />
@@ -18,7 +19,9 @@
 
 		<p:dialog id="dlg-#{cc.attrs.id}" closeOnEscape="true" 
 			widgetVar="#{cc.attrs.widgetVar}" dynamic="false"
-			visible="#{cc.attrs.visible}" modal="true" closable="false">
+			visible="#{cc.attrs.visible}"
+			rendered="#{cc.attrs.rendered}" 
+			modal="true" closable="false">
 			<f:facet name="header">
 				<h:outputText value="#{cc.attrs.header}" />
 			</f:facet>

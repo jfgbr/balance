@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:v="http://xmlns.jcp.org/jsf/composite/components"
+	xmlns:jg="http://com.jgalante.faces/ui"
+	template="/resources/templates/template.xhtml">
+	<ui:define name="styles">
+		<h:outputStylesheet library="css" name="crud.css"></h:outputStylesheet>
+	</ui:define>
+	<ui:define name="content">
+		<v:crudPage id="crud-balance" formId="frm-balance" view="#{balanceView}"
+			headerPanel="#{constants['balance.title']}" tableVisible="false" width="100%">
+			
+			<f:facet name="dataField">
+				<h:panelGrid columns="1">
+					<h:panelGroup>
+						<p:commandButton id="btn-filter" icon="ui-icon-calculator" value="Filter"/>
+						<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind" hideEffect="explode" showEvent="mouseover" hideEvent="mousedown"
+		                    dismissable="false" showCloseIcon="true" >
+							<h:panelGrid columns="2">
+								<h:outputText value="#{constants['account.title']}" />
+								<p:selectOneMenu value="#{balanceView.account}"  converter="entityConverter">
+									<p:ajax event="change" process="@this" update=":crud-balance:frm-balance:data-table" listener="#{balanceView.handleFilterChange}"/>
+									<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+									<f:selectItems value="#{balanceView.accounts}" var="a"
+										itemLabel="#{a.text}" itemValue="#{a}" />
+								</p:selectOneMenu>
+							</h:panelGrid>
+						</p:overlayPanel>
+					</h:panelGroup>
+					<h:panelGroup rendered="#{not empty balanceView.accountCurrentBalance}">
+						<h:outputText value="Current Balance: " style="font-weight:bold;" />
+						<h:outputText value="#{balanceView.accountCurrentBalance}" styleClass="trans-value-positive-#{balanceView.accountCurrentBalance ge 0}">
+							<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
+						</h:outputText>
+					</h:panelGroup>
+					<p:dataTable id="tbl" value="#{balanceView.dataModel}" var="item"
+							style="width:967px" 
+							paginator="true" rows="15" lazy="true"
+							paginatorPosition="top"
+							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+							rowsPerPageTemplate="15,30,50" 
+							widgetVar="datamodel">
+					
+							<p:column width="60" styleClass="trans-col-02">
+								<f:facet name="header">
+									<h:outputText value="#{constants['default.date']}" escape="false" />
+								</f:facet>
+								<h:outputText value="#{item.balanceDate}">
+									<f:convertDateTime pattern="MMM d, yyyy"/>
+								</h:outputText>
+							</p:column>
+							
+							<p:column sortBy="#{item.account.text}"  styleClass="trans-col-01">
+								<f:facet name="header">
+									<h:outputText value="#{constants['account.title']}" escape="false" />
+								</f:facet>
+								<h:outputText value="#{item.account.text}" />
+							</p:column>
+							
+							<p:column sortBy="#{item.value}"  styleClass="trans-col-02">
+								<f:facet name="header">
+									<h:outputText value="#{constants['default.value']}" escape="false" />
+								</f:facet>
+								<h:outputText value="#{item.value}" styleClass="trans-value-positive-#{item.positive}" >
+									<f:convertNumber type="currency" currencySymbol="" locale="pt_BR" />
+								</h:outputText>
+							</p:column>
+				
+							<p:column styleClass="btnColunaAcoes" width="75">
+								<p:commandButton action="#{balanceView.pay(item)}"
+									update=":frm-payment"
+									process="@this"
+									icon="ui-icon ui-icon-copy" style="font-size:6pt;" oncomplete="PF('datamodel').filter()" rendered="#{empty item.transaction}" />
+								<p:commandButton action="#{balanceView.edit}" 
+									update=":crud-balance:frm-balance:modal"
+									process="@this"
+									icon="ui-icon ui-icon-pencil" style="font-size:6pt;" oncomplete="PF('datamodel').filter()" />
+								<p:commandButton action="#{balanceView.remove}" update=":crud-balance:frm-balance:data-table"
+									icon="ui-icon ui-icon-closethick" style="font-size:6pt;" />
+							</p:column>
+				    </p:dataTable>
+				</h:panelGrid>
+				
+		    </f:facet>
+
+			<f:facet name="dialogFields">
+				<h:panelGrid columns="2" width="300px">
+				
+					<h:outputText value="#{constants['account.title']}" />
+					<p:selectOneMenu value="#{balanceView.entity.account}" converter="entityConverter">
+						<p:ajax event="change" process="@this" />
+						<f:selectItems value="#{accountView.accounts}" var="a"
+							itemLabel="#{a.text}" itemValue="#{a}" />
+					</p:selectOneMenu>
+					
+					<h:outputText value="#{constants['default.positive']}" />
+					<p:selectBooleanCheckbox id="positive" value="#{balanceView.entity.positive}" >
+					</p:selectBooleanCheckbox>
+				
+					<h:outputText value="#{constants['default.value']} (R$)" />
+					<jg:inputDecimal id="value" maxlength="18" size="15"
+						value="#{balanceView.entity.value}">
+						<f:convertNumber pattern="#,###,##0.00" locale="pt_BR" />
+					</jg:inputDecimal>
+					
+					<h:outputText value="#{constants['default.date']}" />
+					<p:calendar value="#{balanceView.entity.balanceDate}" />
+					
+				</h:panelGrid>
+			</f:facet>
+
+		</v:crudPage>
+		<h:form id="frm-payment">
+			<v:modal id="payment" header="Payment"
+						visible="#{balanceView.payment}" rendered="#{balanceView.payment}" >
+				<p:ajax event="close" listener="#{balanceView.close}"
+							update=":frm-payment" />
+				<f:facet name="dialogFields">
+					<h:panelGrid columns="2" width="300px">
+						<h:outputText value="#{constants['account.title']}" />
+						<p:selectOneMenu value="#{balanceView.entity.transaction.account}" converter="entityConverter" >
+							<p:ajax event="change" process="@this" />
+							<f:selectItems value="#{balanceView.accounts}" var="a"
+								itemLabel="#{a.text}" itemValue="#{a}" />
+						</p:selectOneMenu>
+						
+						<h:outputText value="#{constants['transfer.category.to']}" />
+						<p:selectOneMenu value="#{balanceView.entity.transaction.category}" converter="entityConverter" >
+							<p:ajax event="change" process="@this" />
+							<f:selectItems value="#{balanceView.categories}" var="c"
+								itemLabel="#{c.text}" itemValue="#{c}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</f:facet>
+				<f:facet name="footer">
+					<h:panelGroup layout="block" styleClass="center">
+						<p:commandButton value="#{constants['default.save']}" action="#{balanceView.proceedPayment}"
+							ajax="true"
+							process="payment"
+							update=":frm-payment, :crud-balance:frm-balance"/>
+						<p:commandButton value="#{constants['default.close']}" action="#{balanceView.close}"
+							ajax="true" process="@this, :frm-payment"
+							update=":frm-payment"/>
+					</h:panelGroup>
+				</f:facet>
+			</v:modal>
+		</h:form>
+	</ui:define>
+</ui:composition>

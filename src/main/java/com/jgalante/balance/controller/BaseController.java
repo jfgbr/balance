@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.transaction.Transactional;
 
 import com.jgalante.balance.facade.IController;
 import com.jgalante.balance.facade.IDAO;
@@ -62,6 +63,7 @@ public class BaseController<T extends BaseEntity, D extends BaseDAO> implements
 	}
 
 	@Override
+	@Transactional
 	public T save(T entity) {
 		return getDAO().save(entity);
 	}

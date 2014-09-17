@@ -41,6 +41,9 @@ public class Category extends BaseEntity {
 
 	@Column(name = "is_positive", nullable = false)
 	private Boolean positive = false;
+	
+	@Column(name = "is_transfer", nullable = false)
+	private Boolean transfer = false;
 
 	@Column(name = "nr_order", nullable = false)
 	private Integer order = 1;
@@ -143,6 +146,14 @@ public class Category extends BaseEntity {
 
 	public void setPositive(Boolean positive) {
 		this.positive = positive;
+	}
+	
+	public Boolean getTransfer() {
+		return transfer;
+	}
+
+	public void setTransfer(Boolean transfer) {
+		this.transfer = transfer;
 	}
 
 	public Integer getLevel() {

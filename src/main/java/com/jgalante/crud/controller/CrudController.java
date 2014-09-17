@@ -16,6 +16,10 @@ public class CrudController<T extends BaseEntity, D extends CrudDAO> extends
 	private static final long serialVersionUID = 1L;
 	
 	protected List<Filter> filters;
+	
+	public List<T> searchAll(Map<String, Boolean> sort) {
+		return getDAO().searchAll(sort);
+	}
 
 	@Override
 	public List<T> search(int first, int pageSize, Map<String, Boolean> sort,
@@ -31,17 +35,22 @@ public class CrudController<T extends BaseEntity, D extends CrudDAO> extends
 	}
 
 	public void addFilter(Filter filter) {
-		if (filters == null) {
-			filters = new LinkedList<Filter>();
+		if (filter != null) {
+			if (filters == null) {
+				filters = new LinkedList<Filter>();
+			}
+			filters.add(filter);
 		}
-		filters.add(filter);
 //		getDAO().cleanFilter();
 //		getDAO().addFilter(filter);
 	}
 	
 	public void cleanFilter() {
+		if (filters != null) {
 //		getDAO().cleanFilter();
-		filters.clear();
+			filters.clear();
+			filters = null;
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

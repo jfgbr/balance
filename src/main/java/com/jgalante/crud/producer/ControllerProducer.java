@@ -1,4 +1,4 @@
-package com.jgalante.balance.producer;
+package com.jgalante.crud.producer;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

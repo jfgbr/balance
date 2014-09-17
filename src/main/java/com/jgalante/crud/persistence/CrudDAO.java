@@ -23,6 +23,11 @@ public class CrudDAO extends BaseDAO {
 	private QueryParam queryParam;
 
 	private List<String> joinFields;
+	
+	@Transactional
+	public <T extends BaseEntity> List<T> searchAll(Map<String, Boolean> sort) {
+		return search(0, 0, sort, new ArrayList<Filter>());
+	}
 
 	@Transactional
 	public <T extends BaseEntity> List<T> search(int first, int pageSize,

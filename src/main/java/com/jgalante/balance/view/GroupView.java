@@ -1,6 +1,5 @@
 package com.jgalante.balance.view;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
@@ -16,10 +15,12 @@ import com.jgalante.balance.controller.GroupController;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Group;
 import com.jgalante.crud.util.ColumnModel;
+import com.jgalante.crud.util.Util;
+import com.jgalante.crud.view.SimpleView;
 
 @Named
 @ViewScoped
-public class GroupView implements Serializable {
+public class GroupView extends SimpleView {
 
 	private static final long serialVersionUID = 1L;
 
@@ -27,30 +28,40 @@ public class GroupView implements Serializable {
 	private GroupController controller;
 
 	private List<Category> categories;
+	
 	private List<Group> group;
+	
 	private List<Integer> years;
+	
 	private List<ColumnModel> cmbDates;
+	
 	private List<ColumnModel> dates;
 
+	private Long account;
+	
 	private Long category;
+	
 	private Integer year;
+	
 	private Calendar startDate;
+	
 	private Calendar endDate;
+	
 	private Integer totalMonths;
 
 	@PostConstruct
 	public void init() {
 		category = null;
-		cmbDates = controller.months();
-		years = controller.years();
+		cmbDates = Util.months();
+		years = Util.years();
 		year = years.get(0);
 		int currentMonth = GregorianCalendar.getInstance().get(Calendar.MONTH);
-		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth-1).getValue();//getFirst().getValue();//ClassHelper.subtractMonthstoCalendar(GregorianCalendar.getInstance(),1);//
-		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth+1).getValue();//ClassHelper.addMonthstoCalendar(GregorianCalendar.getInstance(),1);//(Calendar)((LinkedList<ColumnModel>)cmbDates).getLast().getValue();
+		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth-1).getValue();
+		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth+1).getValue();
 		handleDateChange();
 	}
 
-	public void createListCategories(Long idParent, Calendar startDate, Calendar endDate) {
+	public void createListCategories(Long idParent, Long idAccount, Calendar startDate, Calendar endDate) {
 		if (startDate != null) {
 			startDate.set(Calendar.YEAR, year);			
 		}
@@ -58,7 +69,18 @@ public class GroupView implements Serializable {
 			endDate.set(Calendar.YEAR, year);			
 		}
 		totalMonths = endDate.get(Calendar.MONTH)-startDate.get(Calendar.MONTH);
-		group = controller.findGroupsByParent(idParent, startDate, endDate);
+		group = controller.findGroupsByParent(idParent, idAccount, startDate, endDate);
+	}
+	
+	public void handleAccountChange(ValueChangeEvent event) {
+		account = null;
+		try {
+			account = Long.parseLong(event.getNewValue().toString());
+
+		} catch (Exception e) {
+			account = null;
+		}
+		createListCategories(category,account,startDate,endDate);
 	}
 
 	public void handleCategoryChange(ValueChangeEvent event) {
@@ -69,13 +91,12 @@ public class GroupView implements Serializable {
 		} catch (Exception e) {
 			category = null;
 		}
-		createListCategories(category,startDate,endDate);
+		createListCategories(category,account,startDate,endDate);
 	}
 	
 	public void handleDateChange() {
-//		((Calendar)cmbDates.get(0).getValue()).getTime()
-		dates = controller.months(startDate,endDate);
-		createListCategories(category,startDate,endDate);
+		dates = Util.months(startDate,endDate);
+		createListCategories(category,account,startDate,endDate);
 	}
 
 	public List<Category> getCategories() {

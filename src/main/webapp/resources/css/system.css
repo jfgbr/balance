@@ -29,7 +29,7 @@ body {
 }
 
 .trans-row-01 {
-	background-color: #dddddd;/*#76a5af;*/
+	background-color: #76a5af;
 	color: white;
 	font-weight: bold;
 	font-size: 1.1em;
@@ -74,6 +74,18 @@ body {
 	font-size: 1.4em;
 	font-weight: bold;
 	border: 1px solid #D1D1D1;
+}
+
+.ui-state-highlight, .ui-widget-content .ui-state-highlight, .ui-widget-header .ui-state-highlight {
+    background-color: #84cbff;
+    background-image: linear-gradient(to bottom, #84cbff, #6db4ec);
+    color: black;
+    font-weight: normal;
+}
+/*url("/balance/javax.faces.resource/images/ui-icons_ffffff_256x240.png.jsf?ln=primefaces-bootstrap");
+url("/balance/javax.faces.resource/images/ui-icons_333333_256x240.png.jsf?ln=primefaces-bootstrap")*/
+.ui-state-highlight .ui-icon {
+    background-image:url("/balance/javax.faces.resource/images/ui-icons_333333_256x240.png.jsf?ln=primefaces-bootstrap");
 }
 
 .dates-tbl-header {

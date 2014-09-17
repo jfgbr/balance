@@ -82,7 +82,7 @@ public class BaseDAO implements IDAO, Serializable {
 		return results;
 	}
 	
-	private String defineSortFields(String alias, boolean ascending, String... sort) {
+	protected String defineSortFields(String alias, boolean ascending, String... sort) {
 		StringBuffer sb = new StringBuffer();
 		boolean first = true;
 		for (String item : sort) {

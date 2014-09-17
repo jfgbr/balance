@@ -1,9 +1,6 @@
 package com.jgalante.balance.view;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 
 import javax.inject.Inject;
 
@@ -12,9 +9,10 @@ import com.jgalante.balance.facade.IDAO;
 import com.jgalante.balance.qualifier.Controller;
 import com.jgalante.crud.entity.BaseEntity;
 import com.jgalante.crud.util.Util;
+import com.jgalante.crud.view.SimpleView;
 
 public class BaseView<T extends BaseEntity, C extends IController<T, ? extends IDAO>>
-		implements Serializable {
+		extends SimpleView {
 
 	private static final long serialVersionUID = 1L;
 
@@ -67,13 +65,4 @@ public class BaseView<T extends BaseEntity, C extends IController<T, ? extends I
 		this.entities = entities;
 	}
 
-	protected String getMessage(String key){
-		try{
-			return ResourceBundle.getBundle("MessageResources")
-					.getString(Util.getClass(this.getClass(), 0).getSimpleName().toLowerCase() + "." + key);
-		}catch(MissingResourceException e){
-			return ResourceBundle.getBundle("MessageResources")
-					.getString("default." + key);
-		}
-	}
 }

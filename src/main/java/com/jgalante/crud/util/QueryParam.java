@@ -391,15 +391,17 @@ public class QueryParam implements Serializable {
 		if (getFilters() != null) {
 			LinkedList<Filter> tmpFilters = new LinkedList<Filter>(getFilters());
 			for (Filter filter : tmpFilters) {
-				if (!Operator.JOIN.equals(filter.getOp())) {
-					if (firstFilter) {
-						sb.append("WHERE ");
+				if (filter != null) {
+					if (!Operator.JOIN.equals(filter.getOp())) {
+						if (firstFilter) {
+							sb.append("WHERE ");
+						}
+						sb.append(createWhere(filter));
+						firstFilter = false;
+					} else {
+						addJoinFilter(filter);
+						getFilters().remove(filter);
 					}
-					sb.append(createWhere(filter));
-					firstFilter = false;
-				} else {
-					addJoinFilter(filter);
-					getFilters().remove(filter);
 				}
 			}
 		}
