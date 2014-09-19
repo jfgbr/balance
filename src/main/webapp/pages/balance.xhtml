@@ -38,14 +38,14 @@
 						</h:outputText>
 					</h:panelGroup>
 					<p:dataTable id="tbl" value="#{balanceView.dataModel}" var="item"
-							style="width:967px" 
+							style="width:600px" 
 							paginator="true" rows="15" lazy="true"
 							paginatorPosition="top"
 							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 							rowsPerPageTemplate="15,30,50" 
 							widgetVar="datamodel">
 					
-							<p:column width="60" styleClass="trans-col-02">
+							<p:column styleClass="trans-col-02 dates-tbl-header">
 								<f:facet name="header">
 									<h:outputText value="#{constants['default.date']}" escape="false" />
 								</f:facet>

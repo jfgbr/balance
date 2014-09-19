@@ -3,6 +3,7 @@ package com.jgalante.balance.view;
 import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,8 +20,7 @@ import com.jgalante.balance.controller.TransactionController;
 import com.jgalante.balance.entity.Account;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Transaction;
-import com.jgalante.crud.util.Filter;
-import com.jgalante.crud.util.Filter.Operator;
+import com.jgalante.crud.util.ColumnModel;
 import com.jgalante.crud.util.Util;
 import com.jgalante.crud.util.ViewState;
 import com.jgalante.crud.view.CrudView;
@@ -52,63 +52,105 @@ public class TransactionView extends
 
 	private Category subCategory;
 
-	private BigDecimal currentBalance;
+	private BigDecimal totalCurrentBalance;
+	
+	private BigDecimal periodBalance;
 
-	private BigDecimal accountCurrentBalance;
+	private BigDecimal currentBalance;
 
 	private List<Transaction> selectedTransactions;
 
 	private Date duplicateDate;
 	
+	private Calendar startDate;
+
+	private Calendar endDate;
+	
+	private List<ColumnModel> cmbDates;
+	
 	private static ViewState DUPLICATE = new ViewState(99,"Duplicate"); 
 
 	@PostConstruct
 	public void init() {
-		currentBalance = getController().currentBalance();
-		// categories = categoryController.findCategoryByParent(null);
+		totalCurrentBalance = getController().currentBalance();
 		accounts = accountController.findAll();
-		handleCategoryChange();
+		categories = categoryController.findCategoryByParent(category);
+		cmbDates = Util.months();
+		int currentMonth = GregorianCalendar.getInstance().get(Calendar.MONTH);
+		startDate = (Calendar) ((LinkedList<ColumnModel>) cmbDates).get(0).getValue();
+		endDate = (Calendar) ((LinkedList<ColumnModel>) cmbDates).get(
+				currentMonth).getValue();
+		
+		handleFilterChange();
 	}
-
-	public void handleCategoryChange() {
-		Filter filterAND = new Filter(Operator.AND, new LinkedList<Filter>());
-		filterAND.getFilters().add(
-				new Filter("transactionDate", Util.addMonthstoCalendar(Calendar.getInstance(), 2).getTime(),
-						Operator.EQUAL_LESS));
-		getController().setSearchFilter(filterAND);
-
-		if (account != null) {
-			filterAND.getFilters().add(
-					new Filter("account.id", account.getId()));
-		}
-
+	
+	public void handleFilterChange() {
 		if (category == null) {
 			subCategories = null;
-			cleanEntity();
-			categories = categoryController.findCategoryByParent(null);
-			accountCurrentBalance = getController().currentBalance(account,
-					category);
 		} else {
-			if (getEntity().getCategory() != null
-					&& category.getId().equals(
-							getEntity().getCategory().getParent().getId())) {
-				filterAND.getFilters().add(
-						new Filter("category.id", getEntity().getCategory()
-								.getId()));
-				accountCurrentBalance = getController().currentBalance(account,
-						getEntity().getCategory());
-			} else {
-				cleanEntity();
-				filterAND.getFilters().add(
-						new Filter("category.parent.id", category.getId()));
-				accountCurrentBalance = getController().currentBalance(account,
-						category);
-			}
-			subCategories = categoryController.findCategoryByParent(category
-					.getId());
+			subCategories = categoryController.findCategoryByParent(category);
 		}
 
+		Category categoryTmp = null;
+		if (getEntity().getCategory() != null && getEntity().getCategory().getParent() != null
+				&& getEntity().getCategory().getParent().equals(category)) {
+			categoryTmp = getEntity().getCategory();			
+			getController().configureSearch(account, getEntity().getCategory(), null, startDate, endDate);
+		} else {
+			cleanEntity();
+			categoryTmp = category;
+			getController().configureSearch(account, null, category, startDate, endDate);
+		}
+		currentBalance = null;
+		if (account != null) {
+			currentBalance = getController().currentBalance(account, categoryTmp);
+		}
+		periodBalance = getController().periodBalance(account, categoryTmp, startDate, endDate);		
+		
 	}
+
+//	public void handleFilterChange() {
+//		Filter filterAND = new Filter(Operator.AND, new LinkedList<Filter>());
+//		filterAND.getFilters().add(
+//				new Filter("transactionDate", Util.beginOfMonth(startDate).getTime(),
+//						Operator.EQUAL_GREATER));
+//		filterAND.getFilters().add(
+//				new Filter("transactionDate", Util.endOfMonth(endDate).getTime(),
+//						Operator.EQUAL_LESS));
+//		getController().setSearchFilter(filterAND);
+//
+//		if (account != null) {
+//			filterAND.getFilters().add(
+//					new Filter("account.id", account.getId()));
+//		}
+//
+//		if (category == null) {
+//			subCategories = null;
+//			cleanEntity();
+//			categories = categoryController.findCategoryByParent(null);
+//			accountCurrentBalance = getController().currentBalance(account,
+//					category);
+//		} else {
+//			if (getEntity().getCategory() != null
+//					&& category.getId().equals(
+//							getEntity().getCategory().getParent().getId())) {
+//				filterAND.getFilters().add(
+//						new Filter("category.id", getEntity().getCategory()
+//								.getId()));
+//				accountCurrentBalance = getController().currentBalance(account,
+//						getEntity().getCategory());
+//			} else {
+//				cleanEntity();
+//				filterAND.getFilters().add(
+//						new Filter("category.parent.id", category.getId()));
+//				accountCurrentBalance = getController().currentBalance(account,
+//						category);
+//			}
+//			subCategories = categoryController.findCategoryByParent(category
+//					.getId());
+//		}
+//
+//	}
 
 	@Override
 	public void newEntity() {
@@ -123,7 +165,7 @@ public class TransactionView extends
 		super.edit();
 		category = new Category();
 		category.setId(getEntity().getCategory().getParent().getId());
-		handleCategoryChange();
+		handleFilterChange();
 	}
 
 	@Override
@@ -140,9 +182,9 @@ public class TransactionView extends
 				getEntity().setCategory(subCategory);
 				
 				numMonths = 1;
-				handleCategoryChange();
+				handleFilterChange();
 	
-				currentBalance = getController().currentBalance();
+				totalCurrentBalance = getController().currentBalance();
 	
 				FacesContext.getCurrentInstance().addMessage(
 						null,
@@ -164,17 +206,15 @@ public class TransactionView extends
 	@Override
 	public void remove() {
 		super.remove();
-		currentBalance = getController().currentBalance();
+		totalCurrentBalance = getController().currentBalance();
 	}
 
 	@Override
 	public void close() {
 		numMonths = 1;
-		// category = null;
-		// subCategories = null;
 		cleanEntity();
 		super.close();
-		handleCategoryChange();
+		handleFilterChange();
 	}
 
 	public void duplicate() {
@@ -203,11 +243,7 @@ public class TransactionView extends
 		getEntity().setText(base.getText());
 		category = new Category();
 		category.setId(base.getCategory().getParent().getId());
-		// String json = Util.writeJson(Transaction.class, getEntity());
-		// setEntity(Util.readJson(Transaction.class,
-		// Util.writeJson(Transaction.class, base)));
-		// getEntity().setId(null);
-		handleCategoryChange();
+		handleFilterChange();
 	}
 	
 	public void changeViewStateToDuplicate() {
@@ -247,18 +283,30 @@ public class TransactionView extends
 		this.numMonths = numMonths;
 	}
 
+	/**
+	 * @return the totalCurrentBalance
+	 */
+	public BigDecimal getTotalCurrentBalance() {
+		return totalCurrentBalance;
+	}
+
+	/**
+	 * @return the currentBalance
+	 */
 	public BigDecimal getCurrentBalance() {
 		return currentBalance;
 	}
 
-	public void setCurrentBalance(BigDecimal currentBalance) {
-		this.currentBalance = currentBalance;
+	/**
+	 * @return the periodBalance
+	 */
+	public BigDecimal getPeriodBalance() {
+		return periodBalance;
 	}
 
-	public BigDecimal getAccountCurrentBalance() {
-		return accountCurrentBalance;
-	}
-
+	/**
+	 * @return the account
+	 */
 	public Account getAccount() {
 		return account;
 	}
@@ -267,6 +315,9 @@ public class TransactionView extends
 		this.account = account;
 	}
 
+	/**
+	 * @return the accounts
+	 */
 	public List<Account> getAccounts() {
 		return accounts;
 	}
@@ -301,7 +352,46 @@ public class TransactionView extends
 		this.duplicateDate = duplicateDate;
 	}
 
+	/**
+	 * @return true if ViewState is DUPLICATE
+	 */
 	public boolean isDuplicate() {
 		return DUPLICATE.equals(getViewState());
 	}
+
+	/**
+	 * @return the startDate
+	 */
+	public Calendar getStartDate() {
+		return startDate;
+	}
+
+	/**
+	 * @param startDate the startDate to set
+	 */
+	public void setStartDate(Calendar startDate) {
+		this.startDate = startDate;
+	}
+
+	/**
+	 * @return the endDate
+	 */
+	public Calendar getEndDate() {
+		return endDate;
+	}
+
+	/**
+	 * @param endDate the endDate to set
+	 */
+	public void setEndDate(Calendar endDate) {
+		this.endDate = endDate;
+	}
+
+	/**
+	 * @return the cmbDates
+	 */
+	public List<ColumnModel> getCmbDates() {
+		return cmbDates;
+	}
+
 }

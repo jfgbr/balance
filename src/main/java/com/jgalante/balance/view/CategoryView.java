@@ -18,8 +18,8 @@ public class CategoryView extends BaseView<Category, CategoryController> {
 
 	@PostConstruct
 	public void init() {
-		categories = ((CategoryController) getController())
-				.findCategoryByParent(null);
+//		categories = ((CategoryController) getController())
+//				.findCategoryByParent(null);
 	}
 
 	public List<Category> getCategories() {

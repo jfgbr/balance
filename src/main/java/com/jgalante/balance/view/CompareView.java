@@ -85,9 +85,9 @@ public class CompareView extends SimpleView {
 		compares = compareController.findBalanceTransaction(account, startDate, endDate);
 		if (compares != null && compares.size()>0) {
 			chartModel = new LineChartModel();
-			chartModel.setLegendPosition("b");
+			chartModel.setLegendPosition("ne");
 			chartModel.setShowPointLabels(true);
-			chartModel.setAnimate(true);
+//			chartModel.setAnimate(true);
 	        LineChartSeries series1 = new LineChartSeries();
 	        series1.setLabel("Real");
 	        LineChartSeries series2 = new LineChartSeries();
@@ -104,7 +104,7 @@ public class CompareView extends SimpleView {
 	        chartModel.addSeries(series1);
 	        chartModel.addSeries(series2);
 	         
-	        chartModel.setTitle("Zoom for Details");
+//	        chartModel.setTitle("Zoom for Details");
 	        chartModel.setZoom(true);
 	        Axis yAxis = chartModel.getAxis(AxisType.Y);
 			yAxis.setLabel("Values");
@@ -113,7 +113,7 @@ public class CompareView extends SimpleView {
 			
 	        DateAxis axis = new DateAxis("Dates");
 //	        axis.setTickAngle(-10);
-	        axis.setMax(simpleDateFormat.format(Util.addDaystoDate(lastDate, 1)));
+	        axis.setMax(simpleDateFormat.format(Util.addDaystoDate(lastDate, 15)));
 //	        axis.setTickFormat("%b %#d, %y");
 	        axis.setTickFormat("%b,%#d");
 	         

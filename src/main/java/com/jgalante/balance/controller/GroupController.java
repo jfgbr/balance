@@ -23,6 +23,10 @@ public class GroupController implements Serializable {
 	@Inject
 	private CategoryDAO categoryDAO;
 	
+	public List<Category> findCategories() {
+		return categoryDAO.findCategoryByParent(null);
+	}
+	
 	@Transactional
 	public List<Group> findGroupsByParent(Long idParent, Long idAccount, Calendar startDate, Calendar endDate) {
 		int monthEnd = 11;

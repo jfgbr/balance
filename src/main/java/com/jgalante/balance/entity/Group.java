@@ -20,6 +20,7 @@ public class Group {
 	private Set<Group> subCategories;
 	private boolean hasSubCategories = false;
 	private BigDecimal totalParcialValue;
+	private BigDecimal totalAbsParcialValue;
 	private BigDecimal totalValue;
 
 	public Group() {
@@ -58,6 +59,7 @@ public class Group {
 				values.add(null);
 			}
 			totalParcialValue = BigDecimal.ZERO;
+			totalAbsParcialValue = BigDecimal.ZERO;
 		}
 		BigDecimal monthValue = values.get(month);
 		if (monthValue == null) {
@@ -70,6 +72,7 @@ public class Group {
 			values.set(month, monthValue.subtract(value));
 			totalParcialValue = totalParcialValue.subtract(value);
 		}
+		totalAbsParcialValue = totalAbsParcialValue.add(value);
 	}
 	
 	public void addSubCategories(Group subCategory) {
@@ -132,6 +135,10 @@ public class Group {
 		return totalParcialValue;
 	}
 	
+	public BigDecimal getTotalAbsParcialValue() {
+		return totalAbsParcialValue;
+	}
+
 	public BigDecimal getTotalValue() {
 		return totalValue;
 	}

@@ -13,6 +13,14 @@ public class CategoryController extends BaseController<Category, CategoryDAO> {
 		return ((CategoryDAO)getDAO()).findCategoryByParent(idParent);
 	}
 	
+	public List<Category> findCategoryByParent(Category parent) {
+		Long idParent = null;
+		if (parent != null) {
+			idParent = parent.getId();
+		}
+		return ((CategoryDAO)getDAO()).findCategoryByParent(idParent);
+	}
+	
 
 	public Category findParentByCategory(Long id) {
 		return ((CategoryDAO)getDAO()).findParentByCategory(id);

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import com.jgalante.balance.entity.Transaction;
 import com.jgalante.balance.persistence.TransactionDAO;
 import com.jgalante.crud.controller.CrudController;
 import com.jgalante.crud.util.Filter;
+import com.jgalante.crud.util.Filter.Operator;
 import com.jgalante.crud.util.Util;
 
 public class TransactionController extends
@@ -24,10 +26,37 @@ public class TransactionController extends
 	
 	private Filter searchFilter;
 	
+	public void configureSearch(Account account, Category category, Category parent, Calendar startDate, Calendar endDate) {
+		Filter filterAND = new Filter(Operator.AND, new LinkedList<Filter>());
+		filterAND.getFilters().add(
+				new Filter("transactionDate", Util.beginOfMonth(startDate).getTime(),
+						Operator.EQUAL_GREATER));
+		filterAND.getFilters().add(
+				new Filter("transactionDate", Util.endOfMonth(endDate).getTime(),
+						Operator.EQUAL_LESS));
+		
+		setSearchFilter(filterAND);
+
+		if (account != null) {
+			filterAND.getFilters().add(
+					new Filter("account.id", account.getId()));
+		}
+		
+		if (category != null) {
+			filterAND.getFilters().add(
+				new Filter("category.id", category.getId()));
+		}
+		
+		if (parent != null) {
+			filterAND.getFilters().add(
+				new Filter("category.parent.id", parent.getId()));
+		}
+	}
+	
 	@Override
 	public List<Transaction> search(int first, int pageSize,
 			Map<String, Boolean> sort, Map<String, Object> filters) {
-		cleanFilter();
+		reset();
 		addFilter(searchFilter);
 		Map<String, Boolean> tmpSort = new LinkedHashMap<String, Boolean>();
 		tmpSort.put("transactionDate", true);
@@ -53,19 +82,23 @@ public class TransactionController extends
 //	}
 	
 	public BigDecimal currentBalance() {
-		return getDAO().currentBalance();
+		return currentBalance(null, null);
 	}
 	
 	public BigDecimal currentBalance(Account account, Category category) {
 		return getDAO().currentBalance(account, category);
 	}
 
-	public BigDecimal currentBalance(Account account, Calendar startDate, Calendar endDate) {
-		return getDAO().currentBalance(account, startDate, endDate);
+	public BigDecimal periodBalance(Account account, Calendar endDate) {
+		return getDAO().periodBalance(account, endDate);
+	}
+	
+	public BigDecimal periodBalance(Account account, Category category, Calendar startDate, Calendar endDate) {
+		return getDAO().periodBalance(account, category, startDate, endDate);
 	}
 
-	public BigDecimal currentBalanceCreditCard(Account account, Calendar startDate, Calendar endDate) {
-		return getDAO().currentBalanceCreditCard(account, startDate, endDate);
+	public BigDecimal periodBalanceForCreditCard(Account account, Calendar startDate, Calendar endDate) {
+		return getDAO().periodBalanceForCreditCard(account, startDate, endDate);
 	}
 	
 	public Filter getSearchFilter() {

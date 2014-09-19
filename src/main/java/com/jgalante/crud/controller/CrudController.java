@@ -53,6 +53,11 @@ public class CrudController<T extends BaseEntity, D extends CrudDAO> extends
 		}
 	}
 	
+	public void reset() {
+		cleanFilter();
+		getDAO().getQueryParam().reset();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public D getDAO() {
 		return (D)super.getDAO();

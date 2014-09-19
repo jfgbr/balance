@@ -6,12 +6,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import com.jgalante.balance.controller.GroupController;
+import com.jgalante.balance.entity.Account;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Group;
 import com.jgalante.crud.util.ColumnModel;
@@ -37,9 +37,9 @@ public class GroupView extends SimpleView {
 	
 	private List<ColumnModel> dates;
 
-	private Long account;
+	private Account account;
 	
-	private Long category;
+	private Category category;
 	
 	private Integer year;
 	
@@ -58,39 +58,48 @@ public class GroupView extends SimpleView {
 		int currentMonth = GregorianCalendar.getInstance().get(Calendar.MONTH);
 		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth-1).getValue();
 		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth+1).getValue();
+		categories = controller.findCategories();
 		handleDateChange();
 	}
 
-	public void createListCategories(Long idParent, Long idAccount, Calendar startDate, Calendar endDate) {
+	public void createListCategories(Category category, Account account, Calendar startDate, Calendar endDate) {
 		if (startDate != null) {
 			startDate.set(Calendar.YEAR, year);			
 		}
 		if (endDate != null) {
 			endDate.set(Calendar.YEAR, year);			
 		}
+		Long idParent = null;
+		if (category != null) {
+			idParent = category.getId();
+		}
+		Long idAccount = null;
+		if (account != null) {
+			idAccount = account.getId();
+		}
 		totalMonths = endDate.get(Calendar.MONTH)-startDate.get(Calendar.MONTH);
 		group = controller.findGroupsByParent(idParent, idAccount, startDate, endDate);
 	}
 	
-	public void handleAccountChange(ValueChangeEvent event) {
-		account = null;
-		try {
-			account = Long.parseLong(event.getNewValue().toString());
-
-		} catch (Exception e) {
-			account = null;
-		}
+	public void handleAccountChange() {
+//		account = null;
+//		try {
+//			account = Long.parseLong(event.getNewValue().toString());
+//
+//		} catch (Exception e) {
+//			account = null;
+//		}
 		createListCategories(category,account,startDate,endDate);
 	}
 
-	public void handleCategoryChange(ValueChangeEvent event) {
-		category = null;
-		try {
-			category = Long.parseLong(event.getNewValue().toString());
-
-		} catch (Exception e) {
-			category = null;
-		}
+	public void handleCategoryChange() { //ValueChangeEvent event) {
+//		category = null;
+//		try {
+//			category = Long.parseLong(event.getNewValue().toString());
+//
+//		} catch (Exception e) {
+//			category = null;
+//		}
 		createListCategories(category,account,startDate,endDate);
 	}
 	
@@ -115,11 +124,11 @@ public class GroupView extends SimpleView {
 		return dates;
 	}
 
-	public Long getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(Long category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 
@@ -167,5 +176,18 @@ public class GroupView extends SimpleView {
 		return totalMonths;
 	}
 
-	
+	/**
+	 * @return the account
+	 */
+	public Account getAccount() {
+		return account;
+	}
+
+	/**
+	 * @param account the account to set
+	 */
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
 }

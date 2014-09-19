@@ -261,13 +261,14 @@ public class QueryParam implements Serializable {
 	}
 
 	public String generateAliasParameter(String key) {
-		String newAliasParameter = aliasParameter.get(key);
+		String newAliasParameter = null;//aliasParameter.get(key);
 		Integer idCount = aliasParameter.size();
 		if (newAliasParameter == null) {
 			StringBuilder sb = new StringBuilder("param_");
 			sb.append(idCount.toString());
 			newAliasParameter = sb.toString();
-			aliasParameter.put(key, newAliasParameter);
+			aliasParameter.put(String.format(
+					"%s_%s",key,newAliasParameter), newAliasParameter);
 		}
 		return newAliasParameter;
 	}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:outputStylesheet library="css" name="menu.css" />
+	<h:form id="frm-menu">
+		<ui:remove>
+		<h:graphicImage id="logo" library="images" name="layout/logo.png" />
+		</ui:remove>
+		<div id="info-panel">
+			<div id="user">
+				<div id="user-name" />
+				<div id="system-state" />
+			</div>
+			<div id="controls" />
+		</div>
+		<ul id="menu">
+			<h:link id="menuHome" outcome="/index">
+				<li class="mnuInicio">
+					<div>#{constants['home.title']}</div>
+				</li>
+			</h:link>
+			<h:link id="menuTransaction" outcome="/pages/transaction">
+				<li class="mnuInicio">
+					<div>#{constants['transaction.title']}</div>
+				</li>
+			</h:link>
+			<h:link id="menuBalance" outcome="/pages/balance">
+				<li class="mnuInicio">
+					<div>#{constants['balance.title']}</div>
+				</li>
+			</h:link>
+			<h:link id="menuTransafer" outcome="/pages/transfer">
+				<li class="mnuInicio">
+					<div>#{constants['transfer.title']}</div>
+				</li>
+			</h:link>
+			<h:link id="menuCompare" outcome="/pages/compare">
+				<li class="mnuInicio">
+					<div>#{constants['compare.title']}</div>
+				</li>
+			</h:link>
+			<h:link id="menuExportImport" outcome="/pages/exportImport">
+				<li class="mnuInicio">
+					<div>Export/Import</div>
+				</li>
+			</h:link>
+		</ul>
+
+	</h:form>
+
+</ui:composition>

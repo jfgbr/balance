@@ -43,27 +43,19 @@ public class TransactionDAO extends CrudDAO {
 		return super.search(first, pageSize, sort, filters);
 	}
 	
-//	public List<Category> findCategories() {
-//		CriteriaQuery<Category> cq = getEntityManager().getCriteriaBuilder().createQuery(Category.class);
-//		cq.select(cq.from(Category.class));
-//		return getEntityManager().createQuery(cq).getResultList();
+//	public BigDecimal currentBalance() {
+//		StringBuffer sb = new StringBuffer();
+//		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
+//		sb.append(Transaction.class.getName());
+//		sb.append(" AS t ");
+//		sb.append(" LEFT JOIN t.category c ");
+//		sb.append(" WHERE ");
+//		sb.append(" t.transactionDate <= :tDate");
+//		sb.append(" AND t.account.type.id <> 3");
+//		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
+//		query.setParameter("tDate", Calendar.getInstance(), TemporalType.DATE);
+//		return query.getSingleResult();
 //	}
-
-	public BigDecimal currentBalance() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
-		sb.append(Transaction.class.getName());
-		sb.append(" AS t ");
-		sb.append(" LEFT JOIN t.category c ");
-		sb.append(" WHERE ");
-		sb.append(" t.transactionDate <= :tDate");
-		sb.append(" AND t.account.type.id <> 3");
-//		sb.append(" c.id = :categoryId ");
-//		sb.append(" OR c.parent.id = :categoryId ");
-		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
-		query.setParameter("tDate", Calendar.getInstance(), TemporalType.DATE);
-		return query.getSingleResult();
-	}
 	
 	public BigDecimal currentBalance(Account account, Category category) {
 		StringBuffer sb = new StringBuffer();
@@ -74,6 +66,7 @@ public class TransactionDAO extends CrudDAO {
 		sb.append(" LEFT JOIN t.account a ");
 		sb.append(" WHERE ");
 		sb.append(" t.transactionDate <= :tDate ");
+		sb.append(" AND t.account.type.id <> 3");
 		if (account != null || category != null) {
 			sb.append(" AND ");
 			if (account != null) {
@@ -97,7 +90,7 @@ public class TransactionDAO extends CrudDAO {
 		return query.getSingleResult();
 	}
 
-	public BigDecimal currentBalance(Account account, Calendar startDate, Calendar endDate) {
+	public BigDecimal periodBalance(Account account, Calendar endDate) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
 		sb.append(Transaction.class.getName());
@@ -121,7 +114,42 @@ public class TransactionDAO extends CrudDAO {
 		return query.getSingleResult();
 	}
 	
-	public BigDecimal currentBalanceCreditCard(Account account, Calendar startDate, Calendar endDate) {
+	public BigDecimal periodBalance(Account account, Category category, Calendar startDate, Calendar endDate) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		sb.append(" LEFT JOIN t.category c ");
+		sb.append(" LEFT JOIN t.account a ");
+		sb.append(" WHERE ");
+		sb.append(" (t.transactionDate >= :dtStart) ");
+		sb.append(" AND (t.transactionDate <= :dtEnd) ");
+		sb.append(" AND t.account.type.id <> 3");
+		if (account != null || category != null) {
+			sb.append(" AND ");
+			if (account != null) {
+				sb.append(" a.id = ");
+				sb.append(account.getId());
+			}
+			if (category != null) {
+				if (account != null) {
+					sb.append(" AND ");
+				}
+				if (category.getParent() == null)
+					sb.append(" c.parent.id = ");
+				else
+					sb.append(" c.id = ");
+				sb.append(category.getId());
+			}
+		}
+		
+		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
+		query.setParameter("dtStart", Util.beginOfMonth(startDate), TemporalType.DATE);
+		query.setParameter("dtEnd", Util.endOfMonth(endDate), TemporalType.DATE);
+		return query.getSingleResult();
+	}
+	
+	public BigDecimal periodBalanceForCreditCard(Account account, Calendar startDate, Calendar endDate) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
 		sb.append(Transaction.class.getName());
@@ -138,7 +166,7 @@ public class TransactionDAO extends CrudDAO {
 		query.setParameter("accountId", account.getId());
 		query.setParameter("dtStart", Util.beginOfMonth(startDate), TemporalType.DATE);
 		Calendar date = Util.endOfMonth(endDate);
-		Calendar today = date;// Calendar.getInstance();
+		Calendar today = date;
 		query.setParameter("dtEnd", (date.compareTo(today) > 0 ? today : date), TemporalType.DATE);
 		return query.getSingleResult();
 	}

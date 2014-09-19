@@ -11,14 +11,12 @@ import com.jgalante.balance.entity.Account;
 import com.jgalante.balance.entity.Balance;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Compare;
-import com.jgalante.balance.persistence.CompareDAO;
 import com.jgalante.crud.util.Util;
 
 public class CompareController implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-
 	@Inject
 	private AccountController accountController;
 	
@@ -27,14 +25,6 @@ public class CompareController implements Serializable {
 	
 	@Inject
 	private TransactionController transactionController;
-//	
-//	@Inject
-//	private BalanceController balanceController;
-	
-	
-	@Inject
-	private CompareDAO compareDAO;
-
 
 	public List<Account> findAllAccounts() {
 		return accountController.searchAll(null);
@@ -43,17 +33,6 @@ public class CompareController implements Serializable {
 	public List<Category> findCategories(Long idParent) {
 		return categoryController.findCategoryByParent(idParent);
 	}
-
-	public List<Compare> findCompares(Account account, Category category,
-			Calendar startDate, Calendar endDate) {
-//		Balance balance = balanceController.findByAccountCalendar(account, startDate, endDate);
-//		BigDecimal valueTransaction = transactionController.currentBalance(account, startDate, endDate);
-		
-		
-		
-		return compareDAO.findCompares(account, category, startDate);
-	}
-	
 	
 	public List<Compare> findBalanceTransaction(Account account, Calendar startDate, Calendar endDate) {
 		
@@ -67,9 +46,9 @@ public class CompareController implements Serializable {
 				compare.setDate(balance.getBalanceDate());
 				Calendar calendar = Util.convertDateToCalendar(balance.getBalanceDate());
 				if ("Credit Card".equals(account.getType().getText())) {
-					compare.setEstimateValue(transactionController.currentBalanceCreditCard(account, calendar, calendar));
+					compare.setEstimateValue(transactionController.periodBalanceForCreditCard(account, calendar, calendar));
 				} else {
-					compare.setEstimateValue(transactionController.currentBalance(account, calendar, calendar));
+					compare.setEstimateValue(transactionController.periodBalance(account, calendar));
 				}
 				compare.setBalanceValue(balance.getSignedValue());
 				compares.add(compare);

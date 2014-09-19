@@ -642,8 +642,9 @@ public class Util {
 
 	public static Calendar addMonthstoCalendar(Calendar calendar,
 			Integer numMonths) {
-		calendar.add(Calendar.MONTH, numMonths);
-		return calendar;
+		Calendar c = (Calendar) calendar.clone();
+		c.add(Calendar.MONTH, numMonths);
+		return c;
 	}
 
 	public static Date subtractMonthstoDate(Date date, Integer numMonths) {
@@ -654,8 +655,9 @@ public class Util {
 
 	public static Calendar subtractMonthstoCalendar(Calendar calendar,
 			Integer numMonths) {
-		calendar.add(Calendar.MONTH, -numMonths);
-		return calendar;
+		Calendar c = (Calendar) calendar.clone();
+		c.add(Calendar.MONTH, -numMonths);
+		return c;
 	}
 
 	public static Calendar beginOfMonth(Calendar calendar) {

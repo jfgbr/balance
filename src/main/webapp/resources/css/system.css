@@ -4,10 +4,30 @@ body {
 	height: 100%;
 	font-size: 12px;
 }
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+a:link {
+}
+a {
+    outline: medium none;
+}
+a {
+    cursor: pointer;
+    font: 12px/1.231 arial,helvetica,Trebuchet MS,clean,sans-serif !important;
+}
+li {
+    list-style: none outside none;
+}
 
+.ui-widget {
+	font-size: 85%;
+}
+/*
 .ui-widget,.ui-widget .ui-widget {
 	font-size: 90% !important;
-}
+}*/
 
 #header {
 	text-align: center;
@@ -15,6 +35,10 @@ body {
 
 #header h1 {
 	font-size: 250%;
+}
+
+.dates-tbl-header {
+	width: 80px;
 }
 
 .trans-col-01 {
@@ -29,7 +53,7 @@ body {
 }
 
 .trans-row-01 {
-	background-color: #76a5af;
+	background-color: #dddddd;/*#76a5af;*/
 	color: white;
 	font-weight: bold;
 	font-size: 1.1em;
@@ -65,6 +89,10 @@ body {
   position: relative;
 }
 
+.space-group {
+	padding-bottom: 5px;
+}
+
 
 /*.ui-datatable table {
     width: 100px !important;
@@ -88,6 +116,6 @@ url("/balance/javax.faces.resource/images/ui-icons_333333_256x240.png.jsf?ln=pri
     background-image:url("/balance/javax.faces.resource/images/ui-icons_333333_256x240.png.jsf?ln=primefaces-bootstrap");
 }
 
-.dates-tbl-header {
-	width: 90px;
+.ui-selectonemenu-panel, .ui-selectonemenu-list-item {
+	font-size: 90%;
 }

@@ -185,6 +185,9 @@ public class Category extends BaseEntity {
 	@Override
 	public boolean equals(Object obj) {
 		if (!super.equals(obj)) {
+			if (obj == null) {
+				return false;
+			}
 			Category other = (Category) obj;
 			if (this.text == null) {
 				if (other.text != null) {

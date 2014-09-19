@@ -16,52 +16,76 @@
 			dialogVisible="#{transactionView.viewState.new or transactionView.viewState.edit or transactionView.duplicate}" >
 			
 			<f:facet name="dataField">
-				<h:panelGrid id="dataField" columns="1">
-					<h:panelGroup>
-						<p:commandButton id="btn-filter" icon="ui-icon-calculator" value="Filter"/>
-						<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind" hideEffect="explode" showEvent="mouseover" hideEvent="mousedown"
-		                    dismissable="false" showCloseIcon="true" >
-							<h:panelGrid columns="2">
-								<h:outputText value="#{constants['account.title']}" />
-								<p:selectOneMenu value="#{transactionView.account}"  converter="entityConverter">
-									<p:ajax event="change" process="@this" update="cbx-sub-category,:crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleCategoryChange}"/>
-									<f:selectItem itemLabel="Selecione" itemValue="${null}" />
-									<f:selectItems value="#{transactionView.accounts}" var="a"
-										itemLabel="#{a.text}" itemValue="#{a}" />
-								</p:selectOneMenu>
-								
-								<h:outputText value="#{constants['category.title']}" />
-								<p:selectOneMenu value="#{transactionView.category}"  converter="entityConverter">
-									<p:ajax event="change" process="@this" update="cbx-sub-category,:crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleCategoryChange}"/>
-									<f:selectItem itemLabel="Selecione" itemValue="${null}" />
-									<f:selectItems value="#{transactionView.categories}" var="c"
-										itemLabel="#{c.text}" itemValue="#{c}" />
-								</p:selectOneMenu>
-								
-								<h:outputText value="#{constants['category.sub.title']}"/>
-								<p:selectOneMenu id="cbx-sub-category" value="#{transactionView.entity.category}" converter="entityConverter">
-									<p:ajax event="change" process="@this" update=":crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleCategoryChange}" />
-									<f:selectItem itemLabel="Selecione" itemValue="${null}" />
-									<f:selectItems value="#{transactionView.subCategories}" var="c"
-										itemLabel="#{c.text}" itemValue="#{c}" />
-								</p:selectOneMenu>
-							</h:panelGrid>
-						</p:overlayPanel>
-					</h:panelGroup>
-					<h:panelGroup>
-						<h:outputText value="Total Balance: " style="font-weight:bold;" />
-						<h:outputText value="#{transactionView.currentBalance}" styleClass="trans-value-positive-#{transactionView.currentBalance ge 0}">
-							<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
-						</h:outputText>
-					</h:panelGroup>
-					<h:panelGroup rendered="#{not empty transactionView.account}">
-						<h:outputText value="Current Balance: " style="font-weight:bold;" />
-						<h:outputText value="#{transactionView.accountCurrentBalance}" styleClass="trans-value-positive-#{transactionView.accountCurrentBalance ge 0}">
-							<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
-						</h:outputText>
-					</h:panelGroup>
+				<p:outputPanel styleClass="space-group">
+					<p:commandButton id="btn-filter" icon="ui-icon-calculator" value="Filter"/>
+					<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind" hideEffect="explode" showEvent="mouseover" hideEvent="mousedown"
+	                    dismissable="false" showCloseIcon="true" >
+						<h:panelGrid columns="2">
+							<h:outputText value="#{constants['account.title']}" style="float:right;"/>
+							<p:selectOneMenu value="#{transactionView.account}"  converter="entityConverter">
+								<p:ajax event="change" process="@this" update="cbx-sub-category,:crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleFilterChange}"/>
+								<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+								<f:selectItems value="#{transactionView.accounts}" var="a"
+									itemLabel="#{a.text}" itemValue="#{a}" />
+							</p:selectOneMenu>
+							
+							<h:outputText value="#{constants['category.title']}" style="float:right;"/>
+							<p:selectOneMenu value="#{transactionView.category}"  converter="entityConverter">
+								<p:ajax event="change" process="@this" update="cbx-sub-category,:crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleFilterChange}"/>
+								<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+								<f:selectItems value="#{transactionView.categories}" var="c"
+									itemLabel="#{c.text}" itemValue="#{c}" />
+							</p:selectOneMenu>
+							
+							<h:outputText value="#{constants['category.sub.title']}" style="float:right;"/>
+							<p:selectOneMenu id="cbx-sub-category" value="#{transactionView.entity.category}" converter="entityConverter">
+								<p:ajax event="change" process="@this" update=":crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleFilterChange}" />
+								<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+								<f:selectItems value="#{transactionView.subCategories}" var="c"
+									itemLabel="#{c.text}" itemValue="#{c}" />
+							</p:selectOneMenu>
+							
+							<h:outputText value="Start #{constants['default.date']}" style="float:right;"/>
+							<p:selectOneMenu value="#{transactionView.startDate}"
+								converter="baseConverter">
+								<p:ajax event="change" process="@this" update=":crud-transaction:frm-transaction:data-table"
+									listener="#{transactionView.handleFilterChange}" />
+								<f:selectItems value="#{transactionView.cmbDates}" var="c"
+									itemLabel="#{c.header}" itemValue="#{c.value}" />
+							</p:selectOneMenu>
+	
+							<h:outputText value="End #{constants['default.date']}" style="float:right;"/>
+							<p:selectOneMenu value="#{transactionView.endDate}"
+								converter="baseConverter">
+								<p:ajax event="change" process="@this" update=":crud-transaction:frm-transaction:data-table"
+									listener="#{transactionView.handleFilterChange}" />
+								<f:selectItems value="#{transactionView.cmbDates}" var="c"
+									itemLabel="#{c.header}" itemValue="#{c.value}" />
+							</p:selectOneMenu>
+						</h:panelGrid>
+					</p:overlayPanel>
+				</p:outputPanel>
+				<p:outputPanel styleClass="space-group">
+					<h:outputText value="Total Current Balance: " style="font-weight:bold;" />
+					<h:outputText value="#{transactionView.totalCurrentBalance}" styleClass="trans-value-positive-#{transactionView.totalCurrentBalance ge 0}">
+						<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
+					</h:outputText>
+				</p:outputPanel>
+				<p:outputPanel styleClass="space-group" rendered="#{not empty transactionView.currentBalance}">
+					<h:outputText value="Current Account Balance: " style="font-weight:bold;" />
+					<h:outputText value="#{transactionView.currentBalance}" styleClass="trans-value-positive-#{transactionView.currentBalance ge 0}">
+						<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
+					</h:outputText>
+				</p:outputPanel>
+				<p:outputPanel styleClass="space-group">
+					<h:outputText value="Period Balance: " style="font-weight:bold;" />
+					<h:outputText value="#{transactionView.periodBalance}" styleClass="trans-value-positive-#{transactionView.periodBalance ge 0}">
+						<f:convertNumber type="currency" currencySymbol="R$" locale="pt_BR" />
+					</h:outputText>
+				</p:outputPanel>
+				<p:outputPanel styleClass="space-group">
 					<p:dataTable id="tbl" value="#{transactionView.dataModel}" var="item"
-							style="width:967px;margin-bottom:0"
+							style="margin-bottom:0"
 							paginator="true" rows="15" lazy="true"
 							paginatorPosition="top"
 							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
@@ -72,7 +96,7 @@
 							widgetVar="datamodel">
 							
 					
-							<p:column width="60" styleClass="trans-col-02">
+							<p:column styleClass="trans-col-02 dates-tbl-header">
 								<f:facet name="header">
 									<h:outputText value="#{constants['default.date']}" escape="false" />
 								</f:facet>
@@ -133,8 +157,7 @@
 									process="tbl,@this" icon="ui-icon-copy" value="Duplicate" />
 					        </f:facet>
 				    </p:dataTable>
-					
-				</h:panelGrid>		
+				</p:outputPanel>
 		    </f:facet>
 
 			<f:facet name="dialogFields">
@@ -166,7 +189,7 @@
 						
 						<h:outputText value="#{constants['category.title']}" />
 						<p:selectOneMenu value="#{transactionView.category}"  converter="entityConverter">
-							<p:ajax event="change" process="@this" update="cbx-sub-category" listener="#{transactionView.handleCategoryChange}"/>
+							<p:ajax event="change" process="@this" update="cbx-sub-category" listener="#{transactionView.handleFilterChange}"/>
 							<f:selectItem itemLabel="Selecione" itemValue="${null}" />
 							<f:selectItems value="#{transactionView.categories}" var="c"
 								itemLabel="#{c.text}" itemValue="#{c}" />
@@ -174,7 +197,7 @@
 						
 						<h:outputText value="#{constants['category.sub.title']}"/>
 						<p:selectOneMenu id="cbx-sub-category" value="#{transactionView.entity.category}" converter="entityConverter">
-							<p:ajax event="change" process="@this" update=":crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleCategoryChange}"/>
+							<p:ajax event="change" process="@this" update=":crud-transaction:frm-transaction:data-table" listener="#{transactionView.handleFilterChange}"/>
 							<f:selectItem itemLabel="Selecione" itemValue="${null}" />
 							<f:selectItems value="#{transactionView.subCategories}" var="c"
 								itemLabel="#{c.text}" itemValue="#{c}" />

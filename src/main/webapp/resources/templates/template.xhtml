@@ -19,32 +19,42 @@
 			$('#content').css('width', w);
 		}
 	</script>
-	<h:panelGrid columns="2" columnClasses="sidebar,content">
-		<h:panelGroup id="sidebar" layout="block">
-			<ui:include src="menu.xhtml" />
-		</h:panelGroup>
-		<ui:remove>
-		<h:panelGroup id="linha" style="min-height: 400px;" layout="block"/>
-		</ui:remove>
-		<h:panelGroup id="content" layout="block">
-			<ui:insert name="content">Main Content</ui:insert>
-		</h:panelGroup>
-	</h:panelGrid>
+	<div id="root">
+		<div id="hd">
+			<ui:include src="menu-horizontal.xhtml" />
+		</div>
+		<div id="bd">
+			<ui:insert name="content"/>
+		</div>
+	</div>
+	<ui:remove>
+		<h:panelGrid columns="2" columnClasses="sidebar,content">
+			<h:panelGroup id="sidebar" layout="block">
+				<ui:include src="menu.xhtml" />
+			</h:panelGroup>
+			<ui:remove>
+				<h:panelGroup id="linha" style="min-height: 400px;" layout="block" />
+			</ui:remove>
+			<h:panelGroup id="content" layout="block">
+				<ui:insert name="content">Main Content</ui:insert>
+			</h:panelGroup>
+		</h:panelGrid>
+	</ui:remove>
 	<p:outputPanel id="grp-messages" layout="block" autoUpdate="true">
-		
-		<p:dialog id="grp-dlg-messages" header="Error"  
-			 draggable="false" modal="true" resizable="false"
-		     visible="#{not empty facesContext.maximumSeverity and facesContext.maximumSeverity.ordinal eq 2}">
-		    <p:messages globalOnly="true" />
+
+		<p:dialog id="grp-dlg-messages" header="Error" draggable="false"
+			modal="true" resizable="false"
+			visible="#{not empty facesContext.maximumSeverity and facesContext.maximumSeverity.ordinal eq 2}">
+			<p:messages globalOnly="true" />
 		</p:dialog>
-		
+
 		<p:growl id="grow-messages-info" globalOnly="true" severity="info">
 		</p:growl>
 		<ui:remove>
-			<p:dialog id="grp-dlg-messages-info" header="Info"  
-				 draggable="false" modal="true" resizable="false"
-			     visible="#{not empty facesContext.maximumSeverity and facesContext.maximumSeverity.ordinal eq 0}">
-			    <p:messages globalOnly="true" />
+			<p:dialog id="grp-dlg-messages-info" header="Info" draggable="false"
+				modal="true" resizable="false"
+				visible="#{not empty facesContext.maximumSeverity and facesContext.maximumSeverity.ordinal eq 0}">
+				<p:messages globalOnly="true" />
 			</p:dialog>
 		</ui:remove>
 	</p:outputPanel>
