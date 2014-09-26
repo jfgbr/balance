@@ -7,12 +7,9 @@
 	xmlns:v="http://xmlns.jcp.org/jsf/composite/components"
 	xmlns:jg="http://com.jgalante.faces/ui"
 	template="/resources/templates/template.xhtml">
-	<ui:define name="styles">
-		<h:outputStylesheet library="css" name="crud.css"></h:outputStylesheet>
-	</ui:define>
 	<ui:define name="content">
 		<v:crudPage id="crud-transaction" formId="frm-transaction" view="#{transactionView}"
-			headerPanel="#{constants['transaction.title']}" tableVisible="false" width="100%"
+			headerPanel="#{constants['transaction.title']}" tableVisible="false" 
 			dialogVisible="#{transactionView.viewState.new or transactionView.viewState.edit or transactionView.duplicate}" >
 			
 			<f:facet name="dataField">
@@ -86,7 +83,7 @@
 				<p:outputPanel styleClass="space-group">
 					<p:dataTable id="tbl" value="#{transactionView.dataModel}" var="item"
 							style="margin-bottom:0"
-							paginator="true" rows="15" lazy="true"
+							paginator="true" rows="30" lazy="true"
 							paginatorPosition="top"
 							paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
 							rowsPerPageTemplate="15,30,50"

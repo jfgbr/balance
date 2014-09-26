@@ -149,7 +149,7 @@ public class TransactionDAO extends CrudDAO {
 		return query.getSingleResult();
 	}
 	
-	public BigDecimal periodBalanceForCreditCard(Account account, Calendar startDate, Calendar endDate) {
+	public BigDecimal periodBalanceForCreditCard(Account account, Category category, Calendar startDate, Calendar endDate) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("SELECT SUM(CASE c.positive WHEN 1 THEN t.value ELSE (t.value * -1) END) FROM ");
 		sb.append(Transaction.class.getName());
@@ -161,6 +161,15 @@ public class TransactionDAO extends CrudDAO {
 		sb.append(" AND (t.transactionDate <= :dtEnd) ");
 		sb.append(" AND a.id = :accountId");
 		sb.append(" AND c.positive is FALSE ");
+		
+		if (category != null) {
+			sb.append(" AND ");
+			if (category.getParent() == null)
+				sb.append(" c.parent.id = ");
+			else
+				sb.append(" c.id = ");
+			sb.append(category.getId());
+		}
 		
 		TypedQuery<BigDecimal> query = getEntityManager().createQuery(sb.toString(),BigDecimal.class);
 		query.setParameter("accountId", account.getId());

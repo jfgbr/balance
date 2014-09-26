@@ -73,7 +73,7 @@ public class TransactionView extends
 	@PostConstruct
 	public void init() {
 		totalCurrentBalance = getController().currentBalance();
-		accounts = accountController.findAll();
+		accounts = accountController.searchAll(null);
 		categories = categoryController.findCategoryByParent(category);
 		cmbDates = Util.months();
 		int currentMonth = GregorianCalendar.getInstance().get(Calendar.MONTH);

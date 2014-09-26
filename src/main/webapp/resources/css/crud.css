@@ -73,3 +73,7 @@ body {
 	border: 0 none !important;
 	padding: 4px 10px;
 }
+
+.crud-page-pnl {
+	margin-bottom:10px;
+}

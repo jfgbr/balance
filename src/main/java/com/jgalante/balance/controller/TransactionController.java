@@ -11,6 +11,7 @@ import java.util.Map;
 import javax.transaction.Transactional;
 
 import com.jgalante.balance.entity.Account;
+import com.jgalante.balance.entity.AccountType;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Transaction;
 import com.jgalante.balance.persistence.TransactionDAO;
@@ -94,11 +95,15 @@ public class TransactionController extends
 	}
 	
 	public BigDecimal periodBalance(Account account, Category category, Calendar startDate, Calendar endDate) {
-		return getDAO().periodBalance(account, category, startDate, endDate);
+		if (account != null && AccountType.CREDIT_CARD.equals(account.getType())) {
+			return periodBalanceForCreditCard(account, category, startDate, endDate);
+		} else {
+			return getDAO().periodBalance(account, category, startDate, endDate);
+		}
 	}
 
-	public BigDecimal periodBalanceForCreditCard(Account account, Calendar startDate, Calendar endDate) {
-		return getDAO().periodBalanceForCreditCard(account, startDate, endDate);
+	public BigDecimal periodBalanceForCreditCard(Account account, Category category, Calendar startDate, Calendar endDate) {
+		return getDAO().periodBalanceForCreditCard(account, category, startDate, endDate);
 	}
 	
 	public Filter getSearchFilter() {

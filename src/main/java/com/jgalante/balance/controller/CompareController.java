@@ -8,6 +8,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import com.jgalante.balance.entity.Account;
+import com.jgalante.balance.entity.AccountType;
 import com.jgalante.balance.entity.Balance;
 import com.jgalante.balance.entity.Category;
 import com.jgalante.balance.entity.Compare;
@@ -45,8 +46,8 @@ public class CompareController implements Serializable {
 				compare.setAccount(account);
 				compare.setDate(balance.getBalanceDate());
 				Calendar calendar = Util.convertDateToCalendar(balance.getBalanceDate());
-				if ("Credit Card".equals(account.getType().getText())) {
-					compare.setEstimateValue(transactionController.periodBalanceForCreditCard(account, calendar, calendar));
+				if (AccountType.CREDIT_CARD.equals(account.getType())) {
+					compare.setEstimateValue(transactionController.periodBalanceForCreditCard(account, null, calendar, calendar));
 				} else {
 					compare.setEstimateValue(transactionController.periodBalance(account, calendar));
 				}

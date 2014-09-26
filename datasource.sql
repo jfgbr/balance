@@ -68,7 +68,7 @@ CREATE TABLE balance.transaction (
 CREATE TABLE balance.balance (
   id bigint(20) NOT NULL AUTO_INCREMENT,
   id_account bigint(20) NOT NULL,
-  id_transaction bigint(20) NOT NULL,
+  id_transaction bigint(20),
   dt_balance datetime NOT NULL,
   is_positive boolean NOT NULL DEFAULT TRUE,
   vl_value decimal(19,4) DEFAULT 0,
@@ -77,7 +77,7 @@ CREATE TABLE balance.balance (
   KEY fk_balance_account_idx (id_account),
   KEY fk_balance_transaction_idx (id_transaction),
   CONSTRAINT fk_balance_account FOREIGN KEY (id_account) REFERENCES balance.account (id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT fk_transaction_account FOREIGN KEY (id_transaction) REFERENCES balance.transaction (id) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT fk_balance_transaction FOREIGN KEY (id_transaction) REFERENCES balance.transaction (id) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 /*

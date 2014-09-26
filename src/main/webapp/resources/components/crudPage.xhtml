@@ -8,7 +8,7 @@
 	<cc:interface>
 		<cc:attribute name="id" type="java.lang.String" required="true" />
 		<cc:attribute name="view" type="com.jgalante.crud.view.CrudView" />
-		<cc:attribute name="width" default="380px" />
+		<cc:attribute name="style" default="" />
 
 		<cc:attribute name="formId" type="java.lang.String" required="true" />
 		<cc:attribute name="headerPanel" type="java.lang.String"
@@ -26,11 +26,11 @@
 		<cc:facet name="dialogFields" />
 	</cc:interface>
 	<cc:implementation>
-
+		<h:outputStylesheet library="css" name="crud.css"></h:outputStylesheet>
 		<h:form id="#{cc.attrs.formId}">
 
-			<p:panel id="panel" header="#{cc.attrs.headerPanel}"
-				style="margin-bottom:10px;width:#{cc.attrs.width};" toggleable="false">
+			<p:panel id="panel" header="#{cc.attrs.headerPanel}" styleClass="crud-page-pnl"
+				style="#{cc.attrs.style}" toggleable="false">
 
 				<h:panelGroup layout="block" id="data-table">
 

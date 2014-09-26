@@ -18,6 +18,24 @@ public class AccountType extends BaseEntity {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "type")
 	private Set<Account> accounts;
+	
+	public static AccountType CREDIT_CARD = new AccountType(3L, "Credit Card");
+	
+	/**
+	 */
+	public AccountType() {
+		super();
+	}
+	
+	/**
+	 * @param text
+	 * @param accounts
+	 */
+	public AccountType(Long id, String text) {
+		super();
+		setId(id);
+		this.text = text;
+	}
 
 	public String getText() {
 		return text;
