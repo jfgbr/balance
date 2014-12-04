@@ -24,6 +24,9 @@ public class BalanceDAO extends CrudDAO {
 	public <T extends BaseEntity> List<T> searchAll(Map<String, Boolean> sort) {
 		getQueryParam().reset();
 		addJoinFields("account");
+		addJoinFields("transaction");
+		addJoinFields("transaction.category");
+		addJoinFields("transaction.category.parent");
 		Map<String, Boolean> tmpSort = new LinkedHashMap<String, Boolean>();
 		if (sort != null) {
 			tmpSort.putAll(sort);

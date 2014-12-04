@@ -1,6 +1,7 @@
 package com.jgalante.balance.controller;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,20 +40,40 @@ public class CompareController implements Serializable {
 		
 		List<Compare> compares = new LinkedList<Compare>();
 		if (account != null) {
-			Account accountRet = accountController.findBalanceTransaction(account, startDate, endDate);
-			
-			for (Balance balance : accountRet.getBalances()) {
-				Compare compare = new Compare();
-				compare.setAccount(account);
-				compare.setDate(balance.getBalanceDate());
-				Calendar calendar = Util.convertDateToCalendar(balance.getBalanceDate());
-				if (AccountType.CREDIT_CARD.equals(account.getType())) {
-					compare.setEstimateValue(transactionController.periodBalanceForCreditCard(account, null, calendar, calendar));
-				} else {
-					compare.setEstimateValue(transactionController.periodBalance(account, calendar));
+			Calendar sDate = Util.subtractMonthstoCalendar(startDate, 1);
+			Account accountRet = accountController.findBalanceTransaction(account, sDate, endDate);
+			if (accountRet != null) {
+				BigDecimal previousDifferenceValue = BigDecimal.ZERO;
+				BigDecimal estimateValue = BigDecimal.ZERO;
+				Compare compare;
+				for (Balance balance : accountRet.getBalances()) {
+					compare = new Compare();
+					compare.setAccount(account);
+					compare.setDate(balance.getBalanceDate());
+					Calendar calendar = Util.convertDateToCalendar(balance.getBalanceDate());
+					if (AccountType.CREDIT_CARD.equals(account.getType())) {
+						estimateValue = transactionController.periodBalanceForCreditCard(account, null, calendar, calendar);
+					} else {
+						estimateValue = transactionController.periodBalance(account, calendar);
+						if (estimateValue != null) {
+							if (previousDifferenceValue.compareTo(BigDecimal.ZERO) == -1) {
+								estimateValue = estimateValue.subtract(previousDifferenceValue.abs());
+							} else {
+								if (estimateValue.compareTo(BigDecimal.ZERO) == 1) {
+									estimateValue = estimateValue.add(previousDifferenceValue);
+								} else { 
+									estimateValue = estimateValue.subtract(previousDifferenceValue);
+								}
+							}
+						}
+					}
+					if (estimateValue != null) {
+						compare.setEstimateValue(estimateValue);
+						compare.setBalanceValue(balance.getSignedValue());
+						previousDifferenceValue = previousDifferenceValue.add(compare.getDifferenceValue());
+						compares.add(compare);
+					}
 				}
-				compare.setBalanceValue(balance.getSignedValue());
-				compares.add(compare);
 			}
 		}
 		

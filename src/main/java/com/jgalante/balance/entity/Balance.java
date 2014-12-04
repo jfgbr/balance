@@ -19,7 +19,7 @@ public class Balance extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Account account;
 	
-	@JoinColumn(name = "id_transaction", nullable = false)
+	@JoinColumn(name = "id_transaction")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private Transaction transaction;
 

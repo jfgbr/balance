@@ -32,6 +32,7 @@ public class CategoryDAO extends CrudDAO{
 		if (sort != null) {
 			tmpSort.putAll(sort);
 		}
+		tmpSort.put("parent.id", false);
 		tmpSort.put("id", false);
 		return super.searchAll(tmpSort);
 	}

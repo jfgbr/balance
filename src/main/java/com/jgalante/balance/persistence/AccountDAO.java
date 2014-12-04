@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.NoResultException;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
@@ -64,8 +65,11 @@ public class AccountDAO extends CrudDAO{
 		query.setParameter("accountId", account.getId());
 		query.setParameter("dtStart", Util.beginOfMonth(startDate), TemporalType.DATE);
 		query.setParameter("dtEnd", Util.endOfMonth(endDate), TemporalType.DATE);
-		
-		return query.getSingleResult();
+		try {
+			return query.getSingleResult();
+		} catch(NoResultException e) {
+			return null;
+		}
 	}
 	
 	@Override
