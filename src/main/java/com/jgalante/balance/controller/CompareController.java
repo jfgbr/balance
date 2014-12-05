@@ -3,6 +3,7 @@ package com.jgalante.balance.controller;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,5 +79,13 @@ public class CompareController implements Serializable {
 		}
 		
 		return compares;
+	}
+	
+	public List<Date> findPeriodWithTransaction() {
+		return transactionController.findPeriodWithTransaction(null);
+	}
+	
+	public List<Integer> findYearsWithTransaction() {
+		return transactionController.findYearsWithTransaction();
 	}
 }

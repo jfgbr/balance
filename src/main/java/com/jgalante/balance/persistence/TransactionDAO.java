@@ -2,6 +2,7 @@ package com.jgalante.balance.persistence;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -186,5 +187,29 @@ public class TransactionDAO extends CrudDAO {
 			super.setEntityClass(Transaction.class);
 		}
 		return super.getEntityClass();
+	}
+
+	public List<Date> findPeriodWithTransaction(Integer year) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT DATE(DATE_FORMAT(t.transactionDate, '%Y-%m-01')) as period FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		if (year != null) {
+			sb.append(" WHERE ");
+			sb.append(" YEAR(t.transactionDate) = :year ");
+		}
+		TypedQuery<Date> query = getEntityManager().createQuery(sb.toString(), Date.class);
+		if (year != null) query.setParameter("year", year);
+		return query.getResultList();
+	}
+
+	public List<Integer> findYearsWithTransaction() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("SELECT DISTINCT YEAR(t.transactionDate) as year_result FROM ");
+		sb.append(Transaction.class.getName());
+		sb.append(" AS t ");
+		sb.append(" ORDER BY year_result DESC");
+		TypedQuery<Integer> query = getEntityManager().createQuery(sb.toString(), Integer.class);
+		return query.getResultList();
 	}
 }

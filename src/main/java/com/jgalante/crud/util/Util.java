@@ -682,12 +682,42 @@ public class Util {
 		return months(0,11);
 	}
 	
+	public static LinkedList<ColumnModel> months(List<Date> dates) {
+		return months(dates, "MMMM");
+	}
+	
+	public static LinkedList<ColumnModel> months(List<Date> dates, String dateFormat) {
+		LinkedList<ColumnModel> columnModeldates = new LinkedList<ColumnModel>();
+//		String[] months = new DateFormatSymbols().getMonths();
+		boolean visible = true;
+		Calendar calendar = null;
+		DateFormat df = new SimpleDateFormat(dateFormat);
+		for (Date date : dates) {
+			calendar = convertDateToCalendar(date);
+			columnModeldates.add(new ColumnModel(df.format(calendar.getTime()), calendar, visible));
+		}
+		
+		return columnModeldates;
+	}
+	
 	public static LinkedList<ColumnModel> months(Calendar startDate, Calendar endDate) {
-		return months(getMonth(startDate), getMonth(endDate));
+		List<Date> dates = new LinkedList<Date>();
+		dates.add(startDate.getTime());
+		Calendar tmpDate = Util.addMonthstoCalendar(startDate, 1);
+		
+		while(tmpDate.compareTo(endDate) < 1){
+			dates.add(tmpDate.getTime());
+			tmpDate = Util.addMonthstoCalendar(tmpDate, 1);
+		}		
+		
+		return months(dates);
 	}
 
 	public static LinkedList<ColumnModel> months(Date startDate, Date endDate) {
-    	return months(getMonth(startDate), getMonth(endDate));
+		List<Date> dates = new LinkedList<Date>();
+		dates.add(startDate);
+		dates.add(endDate);
+		return months(dates);
 	}
 
 	public static LinkedList<ColumnModel> months(int monthStart, int monthEnd) {

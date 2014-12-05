@@ -3,6 +3,7 @@ package com.jgalante.balance.controller;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +24,9 @@ public class GroupController implements Serializable {
 	@Inject
 	private CategoryDAO categoryDAO;
 	
+	@Inject
+	private TransactionController transactionController;
+	
 	public List<Category> findCategories() {
 		return categoryDAO.findCategoryByParent(null);
 	}
@@ -33,9 +37,13 @@ public class GroupController implements Serializable {
 		List<Category> categories = null;
 		Calendar eDate = null;
 		if (endDate != null) {
-			eDate = (Calendar)endDate.clone();
-			eDate.set(Calendar.DAY_OF_MONTH, eDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-			monthEnd = Util.getMonth(eDate);
+			if (endDate.get(Calendar.YEAR) > startDate.get(Calendar.YEAR)) {
+				eDate = Util.endOfMonth(startDate);
+				monthEnd = Util.getMonth(Util.endOfMonth(eDate));
+			} else {
+				eDate = Util.endOfMonth(endDate);
+				monthEnd = Util.getMonth(Util.endOfMonth(eDate));
+			}
 		}
 		categories = categoryDAO.findGroupsByParent(idParent, idAccount, startDate, eDate);
 		List<Group> groups = new LinkedList<Group>();
@@ -71,5 +79,11 @@ public class GroupController implements Serializable {
 		return total.getValue();
 	}
 	
+	public List<Date> findPeriodWithTransaction(Integer year) {
+		return transactionController.findPeriodWithTransaction(year);
+	}
 	
+	public List<Integer> findYearsWithTransaction() {
+		return transactionController.findYearsWithTransaction();
+	}
 }

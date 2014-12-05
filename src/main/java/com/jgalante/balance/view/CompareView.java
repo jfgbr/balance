@@ -3,7 +3,6 @@ package com.jgalante.balance.view;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -53,18 +52,17 @@ public class CompareView extends SimpleView {
 
 	private List<ColumnModel> cmbDates;
 
-	private List<ColumnModel> dates;
-
 	@PostConstruct
 	public void init() {
 		accounts = compareController.findAllAccounts();
 		categories = compareController.findCategories(null);
-		cmbDates = Util.months();
-		int currentMonth = GregorianCalendar.getInstance().get(Calendar.MONTH);
-		startDate = (Calendar) ((LinkedList<ColumnModel>) cmbDates).get(
-				currentMonth-1).getValue();
-		endDate = (Calendar) ((LinkedList<ColumnModel>) cmbDates).get(
-				currentMonth+1).getValue();
+		
+		List<Date> cmbPeriod = compareController.findPeriodWithTransaction();
+		cmbDates = Util.months(cmbPeriod, "MMMM, yyyy");
+		
+		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).getFirst().getValue();
+		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).getLast().getValue();
+		
 		compares = compareController.findBalanceTransaction(account, startDate, endDate);
 		handleDateChange();
 	}
@@ -77,7 +75,6 @@ public class CompareView extends SimpleView {
 	}
 
 	public void handleDateChange() {
-		dates = Util.months(startDate, endDate);
 		handleCompareChange();
 	}
 	
@@ -210,13 +207,6 @@ public class CompareView extends SimpleView {
 	 */
 	public List<ColumnModel> getCmbDates() {
 		return cmbDates;
-	}
-
-	/**
-	 * @return the dates
-	 */
-	public List<ColumnModel> getDates() {
-		return dates;
 	}
 
 	/**

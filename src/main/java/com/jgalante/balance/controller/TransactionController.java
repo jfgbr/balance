@@ -105,6 +105,14 @@ public class TransactionController extends
 	public BigDecimal periodBalanceForCreditCard(Account account, Category category, Calendar startDate, Calendar endDate) {
 		return getDAO().periodBalanceForCreditCard(account, category, startDate, endDate);
 	}
+
+	public List<Date> findPeriodWithTransaction(Integer year) {
+		return getDAO().findPeriodWithTransaction(year);
+	}
+	
+	public List<Integer> findYearsWithTransaction() {
+		return getDAO().findYearsWithTransaction();
+	}
 	
 	public Filter getSearchFilter() {
 		return searchFilter;

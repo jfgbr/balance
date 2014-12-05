@@ -12,18 +12,21 @@
 		<h:outputStylesheet library="css" name="crud.css" />
 	</ui:define>
 	<ui:define name="content">
-		<p:panel id="pnl-compare" header="#{constants['compare.title']}" toggleable="false">
-			<h:form id="frm-compare" style="width:100%">
-					<h:panelGrid columns="2" >
-						<h:outputText value="#{constants['account.title']}" style="float:right;"/>
-						<p:selectOneMenu value="#{compareView.account}"
-							converter="entityConverter">
-							<p:ajax event="change" process="@this" update="tbl, line" listener="#{compareView.handleCompareChange}"/>
-							<f:selectItem itemLabel="Selecione" itemValue="${null}" />
-							<f:selectItems value="#{compareView.accounts}" var="a"
-								itemLabel="#{a.text}" itemValue="#{a}" />
-						</p:selectOneMenu>
-<ui:remove>
+		<p:panel id="pnl-compare" header="#{constants['compare.title']}"
+			toggleable="false">
+			<h:form id="frm-compare">
+				<h:panelGrid columns="2">
+					<h:outputText value="#{constants['account.title']}"
+						style="float:right;" />
+					<p:selectOneMenu value="#{compareView.account}"
+						converter="entityConverter">
+						<p:ajax event="change" process="@this" update="tbl, line"
+							listener="#{compareView.handleCompareChange}" />
+						<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+						<f:selectItems value="#{compareView.accounts}" var="a"
+							itemLabel="#{a.text}" itemValue="#{a}" />
+					</p:selectOneMenu>
+					<ui:remove>
 						<h:outputText value="#{constants['category.title']}" />
 						<p:selectOneMenu value="#{compareView.category}"
 							converter="entityConverter">
@@ -31,100 +34,73 @@
 							<f:selectItems value="#{compareView.categories}" var="c"
 								itemLabel="#{c.text}" itemValue="#{c}" />
 						</p:selectOneMenu>
-</ui:remove>
-						<h:outputText value="Start #{constants['default.date']}" style="float:right;"/>
-						<p:selectOneMenu value="#{compareView.startDate}"
-							converter="baseConverter">
-							<p:ajax event="change" process="@this" update="tbl, line"
-								listener="#{compareView.handleDateChange}" />
-							<f:selectItems value="#{compareView.cmbDates}" var="c"
-								itemLabel="#{c.header}" itemValue="#{c.value}" />
-						</p:selectOneMenu>
+					</ui:remove>
+					<h:outputText value="Start #{constants['default.date']}"
+						style="float:right;" />
+					<p:selectOneMenu value="#{compareView.startDate}"
+						converter="baseConverter">
+						<p:ajax event="change" process="@this" update="tbl, line"
+							listener="#{compareView.handleDateChange}" />
+						<f:selectItems value="#{compareView.cmbDates}" var="c"
+							itemLabel="#{c.header}" itemValue="#{c.value}" />
+					</p:selectOneMenu>
 
-						<h:outputText value="End #{constants['default.date']}" style="float:right;"/>
-						<p:selectOneMenu value="#{compareView.endDate}"
-							converter="baseConverter">
-							<p:ajax event="change" process="@this" update="tbl, line"
-								listener="#{compareView.handleDateChange}" />
-							<f:selectItems value="#{compareView.cmbDates}" var="c"
-								itemLabel="#{c.header}" itemValue="#{c.value}" />
-						</p:selectOneMenu>
-						
-						<p:commandButton actionListener="#{compareView.handleCompareChange}" value="Refresh" icon="ui-icon-refresh" update="tbl, line"/>
+					<h:outputText value="End #{constants['default.date']}"
+						style="float:right;" />
+					<p:selectOneMenu value="#{compareView.endDate}"
+						converter="baseConverter">
+						<p:ajax event="change" process="@this" update="tbl, line"
+							listener="#{compareView.handleDateChange}" />
+						<f:selectItems value="#{compareView.cmbDates}" var="c"
+							itemLabel="#{c.header}" itemValue="#{c.value}" />
+					</p:selectOneMenu>
 
-					</h:panelGrid>
-				
-				<p:dataTable id="tbl" value="#{compareView.compares}" var="compare"
-					style="overflow: auto;" >
-					
-					<p:column headerText="#{constant['account.title']}" styleClass="trans-col-01">
-						<h:outputText value="#{compare.date}" style="float:right;" >
-							<f:convertDateTime pattern="MMM d, yyyy"/>
-						</h:outputText>
-					</p:column>
-					<p:column headerText="#{constants['compare.real.title']} #{constants['default.value']}" >
-						<h:outputText value="#{compare.balanceValue}" styleClass="trans-value-positive-#{compare.balanceValue ge 0}" style="float:right;" >
-							<f:convertNumber type="currency" currencySymbol="" />
-						</h:outputText>
-					</p:column>
-					<p:column headerText="#{constants['compare.estimate.title']} #{constants['default.value']}" >
-						<h:outputText value="#{compare.estimateValue}" styleClass="trans-value-positive-#{compare.estimateValue ge 0}" style="float:right;" >
-							<f:convertNumber type="currency" currencySymbol="" />
-						</h:outputText>
-					</p:column>
-					<p:column headerText="#{constants['compare.difference.title']} #{constants['default.value']}" >
-						<h:outputText value="#{compare.differenceValue}" styleClass="trans-value-positive-#{compare.differenceValue ge 0}" style="float:right;" >
-							<f:convertNumber type="currency" currencySymbol="" />
-						</h:outputText>
-					</p:column>
-					
-				</p:dataTable>
-				
+					<p:commandButton
+						actionListener="#{compareView.handleCompareChange}"
+						value="Refresh" icon="ui-icon-refresh" update="tbl, line" />
+
+				</h:panelGrid>
+
 				<h:panelGroup id="line" layout="block" style="width:100%">
-					<p:chart  type="line" model="#{compareView.chartModel}" style="height:400px;width:800px" rendered="#{not empty compareView.compares}" />
+					<p:chart type="line" model="#{compareView.chartModel}"
+						style="height:400px;width:800px"
+						rendered="#{not empty compareView.compares}" />
 				</h:panelGroup>
-				<ui:remove>
+
 				<p:dataTable id="tbl" value="#{compareView.compares}" var="compare"
-					style="overflow: auto;" >
-					<p:columnGroup type="header">
-						<p:row>
-							<p:column headerText="#{constant['account.title']}" styleClass="trans-col-01" rowspan="2"/>
-							<c:forEach items="#{compareView.dates}" var="column">
-								<p:column headerText="#{column.header}" styleClass="trans-col-02 dates-tbl-header" colspan="2"/>
-							</c:forEach>
-						</p:row>
-						<p:row>
-							<c:forEach items="#{compareView.dates}" var="column">
-								<p:column headerText="#{constants['balance.title']} #{constants['default.value']}" />
-								<p:column headerText="#{constants['transaction.title']} #{constants['default.value']}" />
-								<p:column headerText="Diference #{constants['default.value']}" />
-							</c:forEach>
-						</p:row>
-					</p:columnGroup>
-					
-					<p:column styleClass="trans-col-01">
-						<h:outputText value="#{compare.account.text}" style="float:right;" />					
+					style="overflow: auto;width:500px;padding-top:20px">
+
+					<p:column headerText="#{constant['account.title']}">
+						<h:outputText value="#{compare.date}" style="float:right;">
+							<f:convertDateTime pattern="MMM d, yyyy" />
+						</h:outputText>
 					</p:column>
-					
-					<c:forEach items="#{compareView.dates}" var="column">
-						<p:column styleClass="trans-col-02">
-							<h:outputText value="#{compare.balanceValue}" styleClass="trans-value-positive-#{compare.balanceValue ge 0}">
-								<f:convertNumber type="currency" currencySymbol="" />
-							</h:outputText>
-						</p:column>
-						<p:column styleClass="trans-col-02">
-							<h:outputText value="#{compare.estimateValue}" styleClass="trans-value-positive-#{compare.estimateValue ge 0}">
-								<f:convertNumber type="currency" currencySymbol="" />
-							</h:outputText>
-						</p:column>
-						<p:column styleClass="trans-col-02">
-							<h:outputText value="#{compare.differenceValue}" styleClass="trans-value-positive-#{compare.differenceValue ge 0}">
-								<f:convertNumber type="currency" currencySymbol="" />
-							</h:outputText>
-						</p:column>
-					</c:forEach>
+					<p:column
+						headerText="#{constants['compare.real.title']} #{constants['default.value']}">
+						<h:outputText value="#{compare.balanceValue}"
+							styleClass="trans-value-positive-#{compare.balanceValue ge 0}"
+							style="float:right;">
+							<f:convertNumber type="currency" currencySymbol="" />
+						</h:outputText>
+					</p:column>
+					<p:column
+						headerText="#{constants['compare.estimate.title']} #{constants['default.value']}">
+						<h:outputText value="#{compare.estimateValue}"
+							styleClass="trans-value-positive-#{compare.estimateValue ge 0}"
+							style="float:right;">
+							<f:convertNumber type="currency" currencySymbol="" />
+						</h:outputText>
+					</p:column>
+					<p:column
+						headerText="#{constants['compare.difference.title']} #{constants['default.value']}">
+						<h:outputText value="#{compare.differenceValue}"
+							styleClass="trans-value-positive-#{compare.differenceValue ge 0}"
+							style="float:right;">
+							<f:convertNumber type="currency" currencySymbol="" />
+						</h:outputText>
+					</p:column>
+
 				</p:dataTable>
-				</ui:remove>
 			</h:form>
 		</p:panel>
 	</ui:define>

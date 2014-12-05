@@ -1,6 +1,7 @@
 package com.jgalante.balance.view;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,22 +48,34 @@ public class GroupView extends SimpleView {
 	
 	private Calendar endDate;
 	
-	private Integer totalMonths;
-
 	@PostConstruct
-	public void init() {
-		category = null;
-		cmbDates = Util.months();
-		years = Util.years();
-		year = years.get(0);
-		int currentMonth = GregorianCalendar.getInstance().get(Calendar.MONTH);
-		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth-1).getValue();
-		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).get(currentMonth+1).getValue();
+	public void init() {	
+		Calendar calendar = GregorianCalendar.getInstance();
+		category = null;	
+		year = calendar.get(Calendar.YEAR);
+		listDates();
+		
 		categories = controller.findCategories();
 		handleDateChange();
 	}
 
+	private void listDates() {
+		years = controller.findYearsWithTransaction();
+		List<Date> cmbPeriod = controller.findPeriodWithTransaction(year);
+		cmbDates = Util.months(cmbPeriod);
+		years = controller.findYearsWithTransaction();
+		Calendar calendar = GregorianCalendar.getInstance();
+		calendar.set(Calendar.DAY_OF_MONTH, 1);
+		
+		startDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).getFirst().getValue();//(Util.subtractMonthstoCalendar(calendar, 1).get(Calendar.MONTH)).getValue();
+		endDate = (Calendar)((LinkedList<ColumnModel>)cmbDates).getLast().getValue();
+		if (endDate.get(Calendar.YEAR) > startDate.get(Calendar.YEAR)) {
+			endDate = startDate;
+		}
+	}
+
 	public void createListCategories(Category category, Account account, Calendar startDate, Calendar endDate) {
+		
 		if (startDate != null) {
 			startDate.set(Calendar.YEAR, year);			
 		}
@@ -77,7 +90,6 @@ public class GroupView extends SimpleView {
 		if (account != null) {
 			idAccount = account.getId();
 		}
-		totalMonths = endDate.get(Calendar.MONTH)-startDate.get(Calendar.MONTH);
 		group = controller.findGroupsByParent(idParent, idAccount, startDate, endDate);
 	}
 	
@@ -101,6 +113,11 @@ public class GroupView extends SimpleView {
 //			category = null;
 //		}
 		createListCategories(category,account,startDate,endDate);
+	}
+	
+	public void handleYearChange() {
+		listDates();
+		handleDateChange();
 	}
 	
 	public void handleDateChange() {
@@ -170,10 +187,6 @@ public class GroupView extends SimpleView {
 
 	public List<Integer> getYears() {
 		return years;
-	}
-
-	public Integer getTotalMonths() {
-		return totalMonths;
 	}
 
 	/**
