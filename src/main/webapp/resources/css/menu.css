@@ -61,7 +61,7 @@
 
 #menu {
 	left: 50%;
-	margin-left: -500px;
+	margin-left: -365px;
 	position: absolute;
 	text-align: center;
 	top: 22px;
@@ -112,4 +112,44 @@
 
 #menu li.mnuInicio:hover {
 	background-image: url("../resources/images/menu/inicial-over.png");
+}
+
+#menu li.mnuTransfer {
+	background-image: url("../resources/images/menu/transfer-on.png");
+}
+
+#menu li.mnuTransfer:hover {
+	background-image: url("../resources/images/menu/transfer-on.png");
+}
+
+#menu li.mnuTransaction {
+	background-image: url("../resources/images/menu/transaction-on.png");
+}
+
+#menu li.mnuTransaction:hover {
+	background-image: url("../resources/images/menu/transaction-on.png");
+}
+
+#menu li.mnuBalance {
+	background-image: url("../resources/images/menu/balance-on.png");
+}
+
+#menu li.mnuBalance:hover {
+	background-image: url("../resources/images/menu/balance-on.png");
+}
+
+#menu li.mnuCompare {
+	background-image: url("../resources/images/menu/compare-on.png");
+}
+
+#menu li.mnuCompare:hover {
+	background-image: url("../resources/images/menu/compare-on.png");
+}
+
+#menu li.mnuExportImport {
+	background-image: url("../resources/images/menu/expimp-on.png");
+}
+
+#menu li.mnuExportImport:hover {
+	background-image: url("../resources/images/menu/expimp-on.png");
 }

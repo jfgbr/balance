@@ -7,9 +7,9 @@
 
 	<h:outputStylesheet library="css" name="menu.css" />
 	<h:form id="frm-menu">
-		<ui:remove>
 		<h:graphicImage id="logo" library="images" name="layout/logo.png" />
-		</ui:remove>
+		<ui:remove>
+		
 		<div id="info-panel">
 			<div id="user">
 				<div id="user-name" />
@@ -17,6 +17,7 @@
 			</div>
 			<div id="controls" />
 		</div>
+		</ui:remove>
 		<ul id="menu">
 			<h:link id="menuHome" outcome="/index">
 				<li class="mnuInicio">
@@ -24,27 +25,27 @@
 				</li>
 			</h:link>
 			<h:link id="menuTransaction" outcome="/pages/transaction">
-				<li class="mnuInicio">
+				<li class="mnuTransaction">
 					<div>#{constants['transaction.title']}</div>
 				</li>
 			</h:link>
 			<h:link id="menuBalance" outcome="/pages/balance">
-				<li class="mnuInicio">
+				<li class="mnuBalance">
 					<div>#{constants['balance.title']}</div>
 				</li>
 			</h:link>
-			<h:link id="menuTransafer" outcome="/pages/transfer">
-				<li class="mnuInicio">
+			<h:link id="menuTransfer" outcome="/pages/transfer">
+				<li class="mnuTransfer">
 					<div>#{constants['transfer.title']}</div>
 				</li>
 			</h:link>
 			<h:link id="menuCompare" outcome="/pages/compare">
-				<li class="mnuInicio">
+				<li class="mnuCompare">
 					<div>#{constants['compare.title']}</div>
 				</li>
 			</h:link>
 			<h:link id="menuExportImport" outcome="/pages/exportImport">
-				<li class="mnuInicio">
+				<li class="mnuExportImport">
 					<div>Export/Import</div>
 				</li>
 			</h:link>

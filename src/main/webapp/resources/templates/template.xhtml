@@ -5,9 +5,10 @@
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <h:head>
-	<title>Application</title>
+	<title>Financial Pocket</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<h:outputStylesheet library="css" name="system.css"></h:outputStylesheet>
+	<link href="#{resource['images:layout/favicon.ico']}" rel="shortcut icon" type="image/x-icon" />
 	<ui:insert name="styles" />
 </h:head>
 <h:body>
@@ -27,19 +28,6 @@
 			<ui:insert name="content"/>
 		</div>
 	</div>
-	<ui:remove>
-		<h:panelGrid columns="2" columnClasses="sidebar,content">
-			<h:panelGroup id="sidebar" layout="block">
-				<ui:include src="menu.xhtml" />
-			</h:panelGroup>
-			<ui:remove>
-				<h:panelGroup id="linha" style="min-height: 400px;" layout="block" />
-			</ui:remove>
-			<h:panelGroup id="content" layout="block">
-				<ui:insert name="content">Main Content</ui:insert>
-			</h:panelGroup>
-		</h:panelGrid>
-	</ui:remove>
 	<p:outputPanel id="grp-messages" layout="block" autoUpdate="true">
 
 		<p:dialog id="grp-dlg-messages" header="Error" draggable="false"
