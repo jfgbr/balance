@@ -16,38 +16,38 @@
 			<h:form id="frm-transfer">
 				<h:panelGrid columns="1">
 					<h:panelGrid columns="2">
-						<h:outputText value="#{constants['transfer.account.from']}" />
+						<h:outputText value="#{constants['transfer.account.from']}" style="float:right;" />
 						<p:selectOneMenu value="#{transferView.accountFrom}"  converter="entityConverter">
 							<p:ajax event="change" process="@this" />
 							<f:selectItems value="#{transferView.accounts}" var="a"
 								itemLabel="#{a.text}" itemValue="#{a}" />
 						</p:selectOneMenu>
 						
-						<h:outputText value="#{constants['transfer.account.to']}" />
+						<h:outputText value="#{constants['transfer.account.to']}" style="float:right;" />
 						<p:selectOneMenu value="#{transferView.accountTo}"  converter="entityConverter">
 							<p:ajax event="change" process="@this" />
 							<f:selectItems value="#{transferView.accounts}" var="a"
 								itemLabel="#{a.text}" itemValue="#{a}" />
 						</p:selectOneMenu>
 						
-						<h:outputText value="#{constants['transfer.category.from']}" />
+						<h:outputText value="#{constants['transfer.category.from']}" style="float:right;" />
 						<p:selectOneMenu value="#{transferView.categoryFrom}"  converter="entityConverter">
 							<p:ajax event="change" process="@this" />
 							<f:selectItems value="#{transferView.categories}" var="c"
 								itemLabel="#{c.text}" itemValue="#{c}" />
 						</p:selectOneMenu>
 						
-						<h:outputText value="#{constants['transfer.category.to']}" />
+						<h:outputText value="#{constants['transfer.category.to']}" style="float:right;" />
 						<p:selectOneMenu value="#{transferView.categoryTo}"  converter="entityConverter">
 							<p:ajax event="change" process="@this" />
 							<f:selectItems value="#{transferView.categories}" var="c"
 								itemLabel="#{c.text}" itemValue="#{c}" />
 						</p:selectOneMenu>
 						
-						<h:outputText value="#{constants['default.date']}" />
+						<h:outputText value="#{constants['default.date']}" style="float:right;" />
 						<p:calendar value="#{transferView.transferDate}" />
 						
-						<h:outputText value="#{constants['default.value']} (R$)" />
+						<h:outputText value="#{constants['default.value']} (R$)" style="float:right;" />
 						<jg:inputDecimal id="value" maxlength="18" size="15"
 							value="#{transferView.value}">
 							<f:convertNumber pattern="#,###,##0.00" locale="pt_BR" />

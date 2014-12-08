@@ -247,8 +247,15 @@ public class TransactionView extends
 	}
 	
 	public void changeViewStateToDuplicate() {
-		setViewState(DUPLICATE);
-		duplicateDate = Calendar.getInstance().getTime();
+		if (selectedTransactions == null || selectedTransactions.size() == 0) {
+			FacesContext.getCurrentInstance().addMessage(
+					null,
+					new FacesMessage(FacesMessage.SEVERITY_INFO,
+							getMessage("duplicate.empty"), null));			
+		} else {
+			setViewState(DUPLICATE);
+			duplicateDate = Calendar.getInstance().getTime();
+		}
 	}
 
 	public List<Category> getCategories() {

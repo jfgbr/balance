@@ -113,7 +113,7 @@ li {
 /*url("/balance/javax.faces.resource/images/ui-icons_ffffff_256x240.png.jsf?ln=primefaces-bootstrap");
 url("/balance/javax.faces.resource/images/ui-icons_333333_256x240.png.jsf?ln=primefaces-bootstrap")*/
 .ui-state-highlight .ui-icon {
-    background-image:url("/balance/javax.faces.resource/images/ui-icons_333333_256x240.png.jsf?ln=primefaces-bootstrap");
+    background-image:url("#{resource['primefaces-bootstrap:images/ui-icons_333333_256x240.png']}");
 }
 
 .ui-selectonemenu-panel, .ui-selectonemenu-list-item {

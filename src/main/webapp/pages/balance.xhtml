@@ -15,22 +15,20 @@
 			headerPanel="#{constants['balance.title']}" tableVisible="false" width="100%">
 			
 			<f:facet name="dataField">
+				<p:commandButton id="btn-filter" icon="ui-icon-calculator" value="Filter"/>
+				<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind" hideEffect="explode" showEvent="mouseover" hideEvent="mousedown"
+                    dismissable="false" showCloseIcon="true" >
+					<h:panelGrid columns="2">
+						<h:outputText value="#{constants['account.title']}" />
+						<p:selectOneMenu value="#{balanceView.account}"  converter="entityConverter">
+							<p:ajax event="change" process="@this" update=":crud-balance:frm-balance:data-table" listener="#{balanceView.handleFilterChange}"/>
+							<f:selectItem itemLabel="Selecione" itemValue="${null}" />
+							<f:selectItems value="#{balanceView.accounts}" var="a"
+								itemLabel="#{a.text}" itemValue="#{a}" />
+						</p:selectOneMenu>
+					</h:panelGrid>
+				</p:overlayPanel>
 				<h:panelGrid columns="1">
-					<h:panelGroup>
-						<p:commandButton id="btn-filter" icon="ui-icon-calculator" value="Filter"/>
-						<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind" hideEffect="explode" showEvent="mouseover" hideEvent="mousedown"
-		                    dismissable="false" showCloseIcon="true" >
-							<h:panelGrid columns="2">
-								<h:outputText value="#{constants['account.title']}" />
-								<p:selectOneMenu value="#{balanceView.account}"  converter="entityConverter">
-									<p:ajax event="change" process="@this" update=":crud-balance:frm-balance:data-table" listener="#{balanceView.handleFilterChange}"/>
-									<f:selectItem itemLabel="Selecione" itemValue="${null}" />
-									<f:selectItems value="#{balanceView.accounts}" var="a"
-										itemLabel="#{a.text}" itemValue="#{a}" />
-								</p:selectOneMenu>
-							</h:panelGrid>
-						</p:overlayPanel>
-					</h:panelGroup>
 					<h:panelGroup rendered="#{not empty balanceView.accountCurrentBalance}">
 						<h:outputText value="Current Balance: " style="font-weight:bold;" />
 						<h:outputText value="#{balanceView.accountCurrentBalance}" styleClass="trans-value-positive-#{balanceView.accountCurrentBalance ge 0}">

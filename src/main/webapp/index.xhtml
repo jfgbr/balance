@@ -15,36 +15,46 @@
 		<p:panel id="pnl-group" header="Overview" toggleable="false">
 			<h:form id="frm-group">
 				<p:outputPanel styleClass="space-group">
-					<p:commandButton id="btn-filter" icon="ui-icon-calculator" value="Filter">
+					<p:commandButton id="btn-filter" icon="ui-icon-calculator"
+						value="Filter">
 					</p:commandButton>
-					<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind" hideEffect="explode" showEvent="mousedown" hideEvent="mousedown"
-	                    dismissable="false" showCloseIcon="true" dynamic="false" >
+					<p:overlayPanel id="pnl-filter" for="btn-filter" showEffect="blind"
+						hideEffect="explode" showEvent="mousedown" hideEvent="mousedown"
+						dismissable="false" showCloseIcon="true" dynamic="false">
 						<h:panelGrid columns="2">
-							<h:outputText value="#{constants['yearly.title']}" style="float:right;" />
+							<h:outputText value="#{constants['yearly.title']}"
+								style="float:right;" />
 							<p:selectOneMenu value="#{groupView.year}">
 								<p:ajax event="change" process="@this" update="frm-group"
 									listener="#{groupView.handleYearChange}" />
 								<f:selectItems value="#{groupView.years}" var="y"
 									itemLabel="#{y}" itemValue="#{y}" />
 							</p:selectOneMenu>
-							
-							<h:outputText value="#{constants['account.title']}" style="float:right;" />
-							<p:selectOneMenu value="#{groupView.account}" converter="entityConverter">
-								<p:ajax event="change" process="@this" update="tbl" listener="#{groupView.handleAccountChange}" />
+
+							<h:outputText value="#{constants['account.title']}"
+								style="float:right;" />
+							<p:selectOneMenu value="#{groupView.account}"
+								converter="entityConverter">
+								<p:ajax event="change" process="@this" update="tbl"
+									listener="#{groupView.handleAccountChange}" />
 								<f:selectItem itemLabel="Selecione" itemValue="${null}" />
 								<f:selectItems value="#{transactionView.accounts}" var="a"
 									itemLabel="#{a.text}" itemValue="#{a}" />
 							</p:selectOneMenu>
-							
-							<h:outputText value="#{constants['category.title']}" style="float:right;" />
-							<p:selectOneMenu value="#{groupView.category}" converter="entityConverter">
-								<p:ajax event="change" process="@this" update="tbl" listener="#{groupView.handleCategoryChange}" />
+
+							<h:outputText value="#{constants['category.title']}"
+								style="float:right;" />
+							<p:selectOneMenu value="#{groupView.category}"
+								converter="entityConverter">
+								<p:ajax event="change" process="@this" update="tbl"
+									listener="#{groupView.handleCategoryChange}" />
 								<f:selectItem itemLabel="Selecione" itemValue="${null}" />
 								<f:selectItems value="#{groupView.categories}" var="c"
 									itemLabel="#{c}" itemValue="#{c}" />
 							</p:selectOneMenu>
-			
-							<h:outputText value="Start #{constants['default.date']}" style="float:right;" />
+
+							<h:outputText value="Start #{constants['default.date']}"
+								style="float:right;" />
 							<p:selectOneMenu value="#{groupView.startDate}"
 								converter="baseConverter">
 								<p:ajax event="change" process="@this" update="tbl"
@@ -52,8 +62,9 @@
 								<f:selectItems value="#{groupView.cmbDates}" var="c"
 									itemLabel="#{c.header}" itemValue="#{c.value}" />
 							</p:selectOneMenu>
-			
-							<h:outputText value="End #{constants['default.date']}" style="float:right;" />
+
+							<h:outputText value="End #{constants['default.date']}"
+								style="float:right;" />
 							<p:selectOneMenu value="#{groupView.endDate}"
 								converter="baseConverter">
 								<p:ajax event="change" process="@this" update="tbl"
@@ -63,35 +74,34 @@
 							</p:selectOneMenu>
 						</h:panelGrid>
 					</p:overlayPanel>
-				</p:outputPanel>
-				<p:outputPanel styleClass="space-group">
-					<p:commandButton ajax="true" 
+					<p:commandButton ajax="true"
 						action="#{chartsView.generatePieChart(groupView.account,groupView.group)}"
 						update=":charts" value="Pie Chart" />
-				</p:outputPanel>
-				<p:outputPanel styleClass="space-group">					
-					<p:commandButton ajax="true" 
+					<p:commandButton ajax="true"
 						action="#{chartsView.generateLineChart(groupView.account,groupView.category,groupView.startDate,groupView.group)}"
 						update=":charts" value="Line Chart" />
 				</p:outputPanel>
-				<p:outputPanel styleClass="space-group">				
+				<p:outputPanel styleClass="space-group">
 					<p:dataTable id="tbl" value="#{groupView.group}" var="group"
-						style="overflow: auto;" rowStyleClass="#{group.onlyCategory ? 'ui-state-default' : 'trans-row-02'}" >
+						style="overflow: auto;"
+						rowStyleClass="#{group.onlyCategory ? 'ui-state-default' : 'trans-row-02'}">
 						<p:columnGroup type="header">
 							<p:row>
-								<p:column headerText="Title" styleClass="trans-col-01"/>
+								<p:column headerText="Title" styleClass="trans-col-01" />
 								<c:forEach items="#{groupView.dates}" var="column">
-									<p:column headerText="#{column.header}" styleClass="dates-tbl-header" />
+									<p:column headerText="#{column.header}"
+										styleClass="dates-tbl-header" />
 								</c:forEach>
-								<p:column headerText="Total Parcial" styleClass="dates-tbl-header" />
+								<p:column headerText="Total Parcial"
+									styleClass="dates-tbl-header" />
 								<p:column headerText="Total" styleClass="dates-tbl-header" />
 							</p:row>
 						</p:columnGroup>
-		
-		
+
+
 						<p:column styleClass="trans-col-01"
 							rendered="#{group.onlyCategory or group.showing}">
-		
+
 							<h:panelGroup layout="block">
 								<h:outputText value="#{group.title}" style="float:right;" />
 								<p:commandLink action="#{group.invertShowing}" update="tbl"
@@ -106,39 +116,43 @@
 								</p:commandLink>
 							</h:panelGroup>
 						</p:column>
-						
+
 						<p:columns value="#{groupView.dates}" var="column"
 							columnIndexVar="colIndex" styleClass="trans-col-02"
 							rendered="#{group.onlyCategory}">
-							<h:outputText value="#{group.values[colIndex]}" styleClass="trans-value-positive-#{group.values[colIndex] ge 0}">
-								<f:convertNumber type="currency" currencySymbol="" />
-							</h:outputText>
-						</p:columns>	
-		
-						<p:columns value="#{groupView.dates}" var="column"
-							columnIndexVar="colIndex" styleClass="trans-col-02"
-							rendered="#{!group.onlyCategory and group.showing}">
-							<h:outputText value="#{group.values[colIndex]}" styleClass="trans-value-positive-#{group.category.positive}">
+							<h:outputText value="#{group.values[colIndex]}"
+								styleClass="trans-value-positive-#{group.values[colIndex] ge 0}">
 								<f:convertNumber type="currency" currencySymbol="" />
 							</h:outputText>
 						</p:columns>
-						
+
+						<p:columns value="#{groupView.dates}" var="column"
+							columnIndexVar="colIndex" styleClass="trans-col-02"
+							rendered="#{!group.onlyCategory and group.showing}">
+							<h:outputText value="#{group.values[colIndex]}"
+								styleClass="trans-value-positive-#{group.category.positive}">
+								<f:convertNumber type="currency" currencySymbol="" />
+							</h:outputText>
+						</p:columns>
+
 						<p:column styleClass="trans-col-02"
 							rendered="#{group.onlyCategory or group.showing}">
-							<h:outputText value="#{group.totalParcialValue}" styleClass="trans-value-total">
+							<h:outputText value="#{group.totalParcialValue}"
+								styleClass="trans-value-total">
 								<f:convertNumber type="currency" currencySymbol="R$ " />
 							</h:outputText>
 						</p:column>
-						
+
 						<p:column styleClass="trans-col-02"
 							rendered="#{group.onlyCategory or group.showing}">
-							<h:outputText value="#{group.totalValue}" styleClass="trans-value-total">
+							<h:outputText value="#{group.totalValue}"
+								styleClass="trans-value-total">
 								<f:convertNumber type="currency" currencySymbol="R$ " />
 							</h:outputText>
 						</p:column>
-		
+
 					</p:dataTable>
-				</p:outputPanel>	
+				</p:outputPanel>
 			</h:form>
 		</p:panel>
 		<h:panelGroup id="charts" layout="block">
